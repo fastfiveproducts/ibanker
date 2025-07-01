@@ -256,7 +256,7 @@
 				TargetAttributes = {
 					B546DF0C1BDBCC360006D303 = {
 						CreatedOnToolsVersion = 7.1;
-						DevelopmentTeam = 5M3EYN9AZR;
+						DevelopmentTeam = 9NMRZ5DQQ6;
 					};
 				};
 			};
@@ -461,10 +461,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9NMRZ5DQQ6;
 				INFOPLIST_FILE = GameCalc/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = iBanker;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maiser.ibanker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -478,10 +480,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9NMRZ5DQQ6;
 				INFOPLIST_FILE = GameCalc/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = iBanker;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maiser.ibanker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

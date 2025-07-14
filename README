@@ -1,4 +1,9 @@
-This app is known as "iBanker", available for iOS (iPhone and iPad).  iBanker replaces paper money and the job of “banker” in board games like Monopoly® and The Game of Life®. All transactions of money to and from “the bank” are supported, as well as transfers from one player to another. iBanker adds to the fun by allowing players to set a picture for themselves, and sound effects chime-in for most transactions. The Spinner function provides the Spin to Win® function for the electronic banking version of The Game of Life®.
+This app is known as "iBanker", available for iOS (iPhone and iPad).  iBanker replaces paper money in board games like Monopoly® and The Game of Life®! Avoid the hassle of counting cash - keep the paper money in the box and use iBanker instead! With features to send money to and from “the bank”, as well as directly from one player to another, iBanker completely replaces paper money and the job of “banker” in board games.
+
+Add and manage players with the user-friendly iOS interface. All of the information is saved when you leave the app, enabling easy breaks in the gameplay, and an Activity Log keeps track of every transaction. Change the “Mode” in settings to automatically set the starting bank account value to match any of the most popular games. When you are ready to start a new game, “Reset Players” in settings to reset all players back to the starting bank account value.
+
+The Spinner feature provides the Spin to Win® function for the electronic banking version of The Game of Life®.  It is automatically enabled for the $400,000 Mode.
+
 
 This app project was started by Peter James Maiser (Pete Maiser) in 2015, the app was first released on the Apple App Store in 2016, and this code was first published on GitHub under the MIT license in 2017.  A LICENSE file is included.
 
@@ -6,6 +11,8 @@ Monopoly and The Game of Life and are registered trademarks of Hasbro, Inc. Spin
 
 
 Release Updates:
+
+R1.3 --- Updated description and other small changes, another new version coming soon!
 
 R1.2 --- Addressed deprecated iOS functions.  Other small changes.
 

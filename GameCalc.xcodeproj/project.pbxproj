@@ -464,6 +464,7 @@
 				DEVELOPMENT_TEAM = 9NMRZ5DQQ6;
 				INFOPLIST_FILE = GameCalc/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = iBanker;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.board-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.3;
@@ -483,6 +484,7 @@
 				DEVELOPMENT_TEAM = 9NMRZ5DQQ6;
 				INFOPLIST_FILE = GameCalc/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = iBanker;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.board-games";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MARKETING_VERSION = 1.3;

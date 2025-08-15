@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,6 +17,19 @@
 		BDA6C64D2E42FB0400A933EA /* GameAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6412E42FB0400A933EA /* GameAction.swift */; };
 		BDA6C64E2E42FB0400A933EA /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6472E42FB0400A933EA /* PlayerModel.swift */; };
 		BDA6C64F2E42FB0400A933EA /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6442E42FB0400A933EA /* GameState.swift */; };
+		BDEE76932E4BFBB300597AFE /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76912E4BFBB300597AFE /* SettingsStore.swift */; };
+		BDEE769C2E4BFBCF00597AFE /* AddNewPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76952E4BFBCF00597AFE /* AddNewPlayerView.swift */; };
+		BDEE769D2E4BFBCF00597AFE /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76962E4BFBCF00597AFE /* AppColor.swift */; };
+		BDEE769E2E4BFBCF00597AFE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE769A2E4BFBCF00597AFE /* SettingsView.swift */; };
+		BDEE769F2E4BFBCF00597AFE /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76992E4BFBCF00597AFE /* PlayerView.swift */; };
+		BDEE76A02E4BFBCF00597AFE /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76972E4BFBCF00597AFE /* HomeView.swift */; };
+		BDEE76A12E4BFBCF00597AFE /* ActivityLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76942E4BFBCF00597AFE /* ActivityLogView.swift */; };
+		BDEE76A22E4BFBCF00597AFE /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76982E4BFBCF00597AFE /* MainTabView.swift */; };
+		BDEE77162E4F913400597AFE /* libswiftCore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE77152E4F911D00597AFE /* libswiftCore.tbd */; };
+		BDEE77182E4F914300597AFE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE77172E4F914300597AFE /* SwiftUI.framework */; };
+		BDEE771A2E4F914D00597AFE /* Combine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE77192E4F914D00597AFE /* Combine.framework */; };
+		BDEE771C2E4F91F800597AFE /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE771B2E4F91F800597AFE /* Metal.framework */; };
+		BDEE771E2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE771D2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +45,19 @@
 		BDA6C6452E42FB0400A933EA /* GameStateReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStateReducer.swift; sourceTree = "<group>"; };
 		BDA6C6462E42FB0400A933EA /* GameTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTransaction.swift; sourceTree = "<group>"; };
 		BDA6C6472E42FB0400A933EA /* PlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
+		BDEE76912E4BFBB300597AFE /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		BDEE76942E4BFBCF00597AFE /* ActivityLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLogView.swift; sourceTree = "<group>"; };
+		BDEE76952E4BFBCF00597AFE /* AddNewPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewPlayerView.swift; sourceTree = "<group>"; };
+		BDEE76962E4BFBCF00597AFE /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
+		BDEE76972E4BFBCF00597AFE /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		BDEE76982E4BFBCF00597AFE /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		BDEE76992E4BFBCF00597AFE /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		BDEE769A2E4BFBCF00597AFE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		BDEE77152E4F911D00597AFE /* libswiftCore.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libswiftCore.tbd; path = usr/lib/swift/libswiftCore.tbd; sourceTree = SDKROOT; };
+		BDEE77172E4F914300597AFE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		BDEE77192E4F914D00597AFE /* Combine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Combine.framework; path = System/Library/Frameworks/Combine.framework; sourceTree = SDKROOT; };
+		BDEE771B2E4F91F800597AFE /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		BDEE771D2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ibankerInterfaceDesignApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +65,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDEE771C2E4F91F800597AFE /* Metal.framework in Frameworks */,
+				BDEE77182E4F914300597AFE /* SwiftUI.framework in Frameworks */,
+				BDEE771A2E4F914D00597AFE /* Combine.framework in Frameworks */,
+				BDEE77162E4F913400597AFE /* libswiftCore.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,6 +81,7 @@
 				B555BAFF1F4D17C100BADEF6 /* README */,
 				B555BAFD1F4D179A00BADEF6 /* LICENSE */,
 				B546DF0F1BDBCC360006D303 /* iBanker */,
+				BDEE77142E4F911D00597AFE /* Frameworks */,
 				B546DF0E1BDBCC360006D303 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -66,14 +97,17 @@
 		B546DF0F1BDBCC360006D303 /* iBanker */ = {
 			isa = PBXGroup;
 			children = (
-				BDA6C6482E42FB0400A933EA /* Models */,
+				BDEE769B2E4BFBCF00597AFE /* View */,
+				BDEE76922E4BFBB300597AFE /* Store */,
+				BDA6C6482E42FB0400A933EA /* Model */,
 				B546DF1F1BDBCC360006D303 /* Assets.xcassets */,
+				BDEE771D2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift */,
 				B546DF241BDBCC360006D303 /* Info.plist */,
 			);
 			path = iBanker;
 			sourceTree = "<group>";
 		};
-		BDA6C6482E42FB0400A933EA /* Models */ = {
+		BDA6C6482E42FB0400A933EA /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				BDA6C6412E42FB0400A933EA /* GameAction.swift */,
@@ -84,7 +118,41 @@
 				BDA6C6462E42FB0400A933EA /* GameTransaction.swift */,
 				BDA6C6472E42FB0400A933EA /* PlayerModel.swift */,
 			);
-			path = Models;
+			path = Model;
+			sourceTree = "<group>";
+		};
+		BDEE76922E4BFBB300597AFE /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				BDEE76912E4BFBB300597AFE /* SettingsStore.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		BDEE769B2E4BFBCF00597AFE /* View */ = {
+			isa = PBXGroup;
+			children = (
+				BDEE76942E4BFBCF00597AFE /* ActivityLogView.swift */,
+				BDEE76952E4BFBCF00597AFE /* AddNewPlayerView.swift */,
+				BDEE76962E4BFBCF00597AFE /* AppColor.swift */,
+				BDEE76972E4BFBCF00597AFE /* HomeView.swift */,
+				BDEE76982E4BFBCF00597AFE /* MainTabView.swift */,
+				BDEE76992E4BFBCF00597AFE /* PlayerView.swift */,
+				BDEE769A2E4BFBCF00597AFE /* SettingsView.swift */,
+			);
+			name = View;
+			path = iBanker/View;
+			sourceTree = SOURCE_ROOT;
+		};
+		BDEE77142E4F911D00597AFE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BDEE771B2E4F91F800597AFE /* Metal.framework */,
+				BDEE77192E4F914D00597AFE /* Combine.framework */,
+				BDEE77172E4F914300597AFE /* SwiftUI.framework */,
+				BDEE77152E4F911D00597AFE /* libswiftCore.tbd */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -124,7 +192,6 @@
 				};
 			};
 			buildConfigurationList = B546DF081BDBCC360006D303 /* Build configuration list for PBXProject "iBanker" */;
-			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -132,6 +199,7 @@
 				Base,
 			);
 			mainGroup = B546DF041BDBCC360006D303;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = B546DF0E1BDBCC360006D303 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -161,10 +229,19 @@
 			files = (
 				BDA6C6492E42FB0400A933EA /* GameStateReducer.swift in Sources */,
 				BDA6C64A2E42FB0400A933EA /* GameSession.swift in Sources */,
+				BDEE771E2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift in Sources */,
 				BDA6C64B2E42FB0400A933EA /* GameTransaction.swift in Sources */,
 				BDA6C64C2E42FB0400A933EA /* GameMode.swift in Sources */,
+				BDEE76932E4BFBB300597AFE /* SettingsStore.swift in Sources */,
 				BDA6C64D2E42FB0400A933EA /* GameAction.swift in Sources */,
 				BDA6C64E2E42FB0400A933EA /* PlayerModel.swift in Sources */,
+				BDEE769C2E4BFBCF00597AFE /* AddNewPlayerView.swift in Sources */,
+				BDEE769D2E4BFBCF00597AFE /* AppColor.swift in Sources */,
+				BDEE769E2E4BFBCF00597AFE /* SettingsView.swift in Sources */,
+				BDEE769F2E4BFBCF00597AFE /* PlayerView.swift in Sources */,
+				BDEE76A02E4BFBCF00597AFE /* HomeView.swift in Sources */,
+				BDEE76A12E4BFBCF00597AFE /* ActivityLogView.swift in Sources */,
+				BDEE76A22E4BFBCF00597AFE /* MainTabView.swift in Sources */,
 				BDA6C64F2E42FB0400A933EA /* GameState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -177,7 +254,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -221,7 +297,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -235,7 +311,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -273,7 +348,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -287,16 +362,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LIBRARY = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iBanker/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = iBanker;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.board-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
 				);
 				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maiser.ibanker;
@@ -309,16 +395,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_CXX_LIBRARY = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iBanker/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = iBanker;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.board-games";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/swift",
 				);
 				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.maiser.ibanker;

@@ -15,63 +15,74 @@ struct AddNewPlayerView: View {
     // @State properties to hold the input values from the form.
     @State private var playerName: String = ""
     @State private var playerToken: String = ""
-    @State private var playerBalance: String
-    @State private var playerSalary: String
+    @State private var playerBalance: Double? = nil
+    @State private var playerSalary: Int? = nil
 
     // A closure to pass the new Player object back to the HomeView.
     var onSave: (Player) -> Void
     
-    // Custom initializer to get default values from EnvironmentObject
-    init(onSave: @escaping (Player) -> Void) {
-        self.onSave = onSave
-        // Initialize state properties, they will be set when the environment object is available
-        _playerBalance = State(initialValue: "") // Temporary empty string
-        _playerSalary = State(initialValue: "")   // Temporary empty string
+    private var currencyFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        return formatter
     }
-
+    
+    // Formatter for the playerSalary field (integers only)
+    private var integerFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .none
+        formatter.usesGroupingSeparator = false
+        formatter.generatesDecimalNumbers = false
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }
+    
     var body: some View {
         NavigationView {
             Form {
                 Section("Player Details") {
-                    TextField("Player Name", text: $playerName)
-                        .autocorrectionDisabled() // Disable autocorrection for names
-                        .textInputAutocapitalization(.words) // Capitalize first letter of each word
-                    
-                    TextField("Token", text: $playerToken)
-                        .autocorrectionDisabled() // Disable autocorrection for names
-                        .textInputAutocapitalization(.words) // Capitalize first letter of each word
+                    HStack{
+                        Text("Name:")
+                        TextField("Player Name", text: $playerName)
+                            .autocorrectionDisabled() // Disable autocorrection for names
+                            .textInputAutocapitalization(.words) // Capitalize first letter of each word
+                    }
 
-                    TextField("Initial Balance", text: $playerBalance)
-                        .keyboardType(.numberPad) // Show number pad for balance input
-                        .autocorrectionDisabled()
+                    HStack{
+                        Text("Token:")
+                        TextField("Player Token", text: $playerToken)
+                            .autocorrectionDisabled() // Disable autocorrection for names
+                            .textInputAutocapitalization(.words) // Capitalize first letter of each word
+                    }
+
+                    HStack {
+                        Text("Balance:")
+                        HStack(spacing: 0) {
+                            Text("$")
+                            TextField("Initial Balance", value: $playerBalance, formatter: currencyFormatter)
+                                .keyboardType(.decimalPad)
+                                .autocorrectionDisabled()
+                        }
+                    }
                     
-                    TextField("Initial Salary", text: $playerSalary)
-                        .keyboardType(.numberPad) // Show number pad for balance input
-                        .autocorrectionDisabled()
+                    HStack {
+                        Text("Salary:")
+                        HStack(spacing: 0) {
+                            Text("$")
+                            TextField("Initial Salary", value: $playerSalary, formatter: integerFormatter)
+                                .keyboardType(.numberPad) // Show number pad for balance input
+                                .autocorrectionDisabled()
+                        }
+                    }
                 }
 
                 Section {
-                    /* //OLD SAVE PLAYER BUTTON
-                    Button("Save Player") {
-                        // Validate balance input
-                        if let balance = Int(playerBalance) {
-                            if let salary = Int(playerSalary) {
-                                let newPlayer = Player(id: UUID().uuidString, name: playerName, token: playerToken, isLocalOnly: true, salary: salary)
-                                onSave(newPlayer) // Call the closure to pass the new player back
-                                dismiss() // Dismiss the sheet
-                            }
-                        } else {
-                            // Handle invalid balance input (e.g., show an alert)
-                            print("Invalid balance input")
-                            // In a real app, you might show a more user-friendly error message here.
-                        }
-                    }
-                    .disabled(playerName.isEmpty) // Disable save button if name is empty
-                     */
                     Button("Save Player") {
                         // Safely parse balance and salary, defaulting to 0 if empty or invalid
-                        let finalBalance = Int(playerBalance) ?? 0
-                        let finalSalary = Int(playerSalary) ?? 0
+                        let finalBalance = Int(playerBalance ?? 0.0)
+                        let finalSalary = playerSalary ?? 0
 
                         let newPlayer = Player(id: UUID().uuidString,
                                                name: playerName.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -105,12 +116,17 @@ struct AddNewPlayerView: View {
                 // Set default values from settings when the view appears
                 // We need to access settings via EnvironmentObject here, which is available onAppear
                 if playerName.isEmpty { // Only set defaults if player name is empty (new player)
-                    self.playerBalance = String(gameSession.settings.effectiveDefaultBalance)
-                    self.playerSalary = String(gameSession.settings.effectiveDefaultSalary)
+                    if playerBalance == nil {
+                        self.playerBalance = Double(gameSession.settings.effectiveDefaultBalance)
+                    }
+                    if playerSalary == nil {
+                        self.playerSalary = gameSession.settings.effectiveDefaultSalary
+                    }
                 }
             }
         }
     }
+    
 }
 
 #Preview {

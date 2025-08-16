@@ -79,7 +79,7 @@ struct HomeView: View {
                 .foregroundColor(.primary)
 
             NavigationLink(destination: SettingsView()) {
-                Text("First, select your game mode in the settings tab!")
+                Text("Select your game mode in the settings tab!")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -91,7 +91,7 @@ struct HomeView: View {
             Button(action: {
                 showingAddPlayerSheet = true
             }) {
-                Text("To begin, tap here or press the + button to create your first player!")
+                Text("Tap here or press the + button to create your first player!")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -127,10 +127,12 @@ struct HomeView: View {
                                     .font(.headline)
                                     .accessibilityLabel("Player name: \(player.name)")
                                 
-                                Text("Token: \(player.token)")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                    .accessibilityLabel("Player token name: \(player.token)")
+                                if player.token != "" {
+                                    Text("Token: \(player.token)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.gray)
+                                        .accessibilityLabel("Player token name: \(player.token)")
+                                }
                             }
                             
                             Spacer()

@@ -10,16 +10,13 @@
 		B546DF201BDBCC360006D303 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B546DF1F1BDBCC360006D303 /* Assets.xcassets */; };
 		B555BAFE1F4D179A00BADEF6 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = B555BAFD1F4D179A00BADEF6 /* LICENSE */; };
 		B555BB001F4D17C100BADEF6 /* README in Resources */ = {isa = PBXBuildFile; fileRef = B555BAFF1F4D17C100BADEF6 /* README */; };
-		BDA6C6492E42FB0400A933EA /* GameStateReducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6452E42FB0400A933EA /* GameStateReducer.swift */; };
 		BDA6C64A2E42FB0400A933EA /* GameSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6432E42FB0400A933EA /* GameSession.swift */; };
 		BDA6C64B2E42FB0400A933EA /* GameTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6462E42FB0400A933EA /* GameTransaction.swift */; };
 		BDA6C64C2E42FB0400A933EA /* GameMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6422E42FB0400A933EA /* GameMode.swift */; };
 		BDA6C64D2E42FB0400A933EA /* GameAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6412E42FB0400A933EA /* GameAction.swift */; };
 		BDA6C64E2E42FB0400A933EA /* PlayerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6472E42FB0400A933EA /* PlayerModel.swift */; };
-		BDA6C64F2E42FB0400A933EA /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA6C6442E42FB0400A933EA /* GameState.swift */; };
 		BDEE76932E4BFBB300597AFE /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76912E4BFBB300597AFE /* SettingsStore.swift */; };
 		BDEE769C2E4BFBCF00597AFE /* AddNewPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76952E4BFBCF00597AFE /* AddNewPlayerView.swift */; };
-		BDEE769D2E4BFBCF00597AFE /* AppColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76962E4BFBCF00597AFE /* AppColor.swift */; };
 		BDEE769E2E4BFBCF00597AFE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE769A2E4BFBCF00597AFE /* SettingsView.swift */; };
 		BDEE769F2E4BFBCF00597AFE /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76992E4BFBCF00597AFE /* PlayerView.swift */; };
 		BDEE76A02E4BFBCF00597AFE /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE76972E4BFBCF00597AFE /* HomeView.swift */; };
@@ -41,14 +38,11 @@
 		BDA6C6412E42FB0400A933EA /* GameAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameAction.swift; sourceTree = "<group>"; };
 		BDA6C6422E42FB0400A933EA /* GameMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameMode.swift; sourceTree = "<group>"; };
 		BDA6C6432E42FB0400A933EA /* GameSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSession.swift; sourceTree = "<group>"; };
-		BDA6C6442E42FB0400A933EA /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
-		BDA6C6452E42FB0400A933EA /* GameStateReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStateReducer.swift; sourceTree = "<group>"; };
 		BDA6C6462E42FB0400A933EA /* GameTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameTransaction.swift; sourceTree = "<group>"; };
 		BDA6C6472E42FB0400A933EA /* PlayerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerModel.swift; sourceTree = "<group>"; };
 		BDEE76912E4BFBB300597AFE /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
 		BDEE76942E4BFBCF00597AFE /* ActivityLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLogView.swift; sourceTree = "<group>"; };
 		BDEE76952E4BFBCF00597AFE /* AddNewPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewPlayerView.swift; sourceTree = "<group>"; };
-		BDEE76962E4BFBCF00597AFE /* AppColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColor.swift; sourceTree = "<group>"; };
 		BDEE76972E4BFBCF00597AFE /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		BDEE76982E4BFBCF00597AFE /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		BDEE76992E4BFBCF00597AFE /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
@@ -59,6 +53,24 @@
 		BDEE771B2E4F91F800597AFE /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		BDEE771D2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ibankerInterfaceDesignApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		BDEE77482E5111C700597AFE /* ViewSupport */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ViewSupport;
+			sourceTree = "<group>";
+		};
+		BDEE77BA2E5111EA00597AFE /* ViewModel */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		BDEE77BB2E5111F400597AFE /* ModelSupport */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ModelSupport;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B546DF0A1BDBCC360006D303 /* Frameworks */ = {
@@ -97,9 +109,12 @@
 		B546DF0F1BDBCC360006D303 /* iBanker */ = {
 			isa = PBXGroup;
 			children = (
-				BDEE769B2E4BFBCF00597AFE /* View */,
-				BDEE76922E4BFBB300597AFE /* Store */,
 				BDA6C6482E42FB0400A933EA /* Model */,
+				BDEE77BB2E5111F400597AFE /* ModelSupport */,
+				BDEE769B2E4BFBCF00597AFE /* View */,
+				BDEE77BA2E5111EA00597AFE /* ViewModel */,
+				BDEE77482E5111C700597AFE /* ViewSupport */,
+				BDEE76922E4BFBB300597AFE /* Store */,
 				B546DF1F1BDBCC360006D303 /* Assets.xcassets */,
 				BDEE771D2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift */,
 				B546DF241BDBCC360006D303 /* Info.plist */,
@@ -113,8 +128,6 @@
 				BDA6C6412E42FB0400A933EA /* GameAction.swift */,
 				BDA6C6422E42FB0400A933EA /* GameMode.swift */,
 				BDA6C6432E42FB0400A933EA /* GameSession.swift */,
-				BDA6C6442E42FB0400A933EA /* GameState.swift */,
-				BDA6C6452E42FB0400A933EA /* GameStateReducer.swift */,
 				BDA6C6462E42FB0400A933EA /* GameTransaction.swift */,
 				BDA6C6472E42FB0400A933EA /* PlayerModel.swift */,
 			);
@@ -134,7 +147,6 @@
 			children = (
 				BDEE76942E4BFBCF00597AFE /* ActivityLogView.swift */,
 				BDEE76952E4BFBCF00597AFE /* AddNewPlayerView.swift */,
-				BDEE76962E4BFBCF00597AFE /* AppColor.swift */,
 				BDEE76972E4BFBCF00597AFE /* HomeView.swift */,
 				BDEE76982E4BFBCF00597AFE /* MainTabView.swift */,
 				BDEE76992E4BFBCF00597AFE /* PlayerView.swift */,
@@ -169,6 +181,11 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				BDEE77482E5111C700597AFE /* ViewSupport */,
+				BDEE77BA2E5111EA00597AFE /* ViewModel */,
+				BDEE77BB2E5111F400597AFE /* ModelSupport */,
 			);
 			name = iBanker;
 			productName = GameCalc;
@@ -227,7 +244,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BDA6C6492E42FB0400A933EA /* GameStateReducer.swift in Sources */,
 				BDA6C64A2E42FB0400A933EA /* GameSession.swift in Sources */,
 				BDEE771E2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift in Sources */,
 				BDA6C64B2E42FB0400A933EA /* GameTransaction.swift in Sources */,
@@ -236,13 +252,11 @@
 				BDA6C64D2E42FB0400A933EA /* GameAction.swift in Sources */,
 				BDA6C64E2E42FB0400A933EA /* PlayerModel.swift in Sources */,
 				BDEE769C2E4BFBCF00597AFE /* AddNewPlayerView.swift in Sources */,
-				BDEE769D2E4BFBCF00597AFE /* AppColor.swift in Sources */,
 				BDEE769E2E4BFBCF00597AFE /* SettingsView.swift in Sources */,
 				BDEE769F2E4BFBCF00597AFE /* PlayerView.swift in Sources */,
 				BDEE76A02E4BFBCF00597AFE /* HomeView.swift in Sources */,
 				BDEE76A12E4BFBCF00597AFE /* ActivityLogView.swift in Sources */,
 				BDEE76A22E4BFBCF00597AFE /* MainTabView.swift in Sources */,
-				BDA6C64F2E42FB0400A933EA /* GameState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,6 +315,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -367,6 +382,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = iBanker/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = iBanker;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.board-games";
@@ -400,6 +416,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = iBanker/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = iBanker;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.board-games";

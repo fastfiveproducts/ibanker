@@ -10,17 +10,19 @@ import Foundation
 class GameStateReducer {
     static func reduce(players: [Player], transactions: [GameTransaction]) -> GameState {
         // 1. Initialize the starting state
-        var currentGameState = GameState(playerBalances: [:])
+        var currentGameState = GameState(playerBalances: [:], playerSalaries: [:])
 
         // Populate initial balances for all players (assuming they start with 0 or a fixed amount)
         for player in players {
             currentGameState.playerBalances[player.id] = 0 // Or some starting money
+            currentGameState.playerSalaries[player.id] = 0
         }
 
         // 2. Iterate through each transaction and apply its effect
         for transaction in transactions {
             let playerID = transaction.playerID
             var currentPlayerBalance = currentGameState.playerBalances[playerID] ?? 0 // Get current balance, or 0 if player somehow not found
+            var currentPlayerSalary = currentGameState.playerSalaries[playerID] ?? 0
 
             switch transaction.action {
             case .collectSalary(let amount):
@@ -39,6 +41,9 @@ class GameStateReducer {
 
             case .subtractMoney(let amount):
                 currentPlayerBalance -= amount
+                
+            case .updateSalary(let newSalary):
+                currentPlayerSalary = newSalary
 
             case .custom(let description):
                 // For custom actions, you'd need more logic or
@@ -51,6 +56,7 @@ class GameStateReducer {
 
             // Update the player's balance in the current state
             currentGameState.playerBalances[playerID] = currentPlayerBalance
+            currentGameState.playerSalaries[playerID] = currentPlayerSalary
         }
 
         // 3. Return the final, calculated state

@@ -31,27 +31,11 @@ struct HomeView: View {
                 players.append(newPlayer) // Add the new player to the list
             }
         }
-        /*
+        
         .onAppear {
-            // Example: Load players from gameSession or a persistent store
-            // For now, let's assume gameSession might have initial players or you load them here
-            if gameSession.currentState.players.isEmpty && players.isEmpty {
-                // Optionally add some dummy players for testing if needed
-                // players = [Player(id: UUID().uuidString, name: "Alice", token: "person", isLocalOnly: true, salary: 200)]
-                // gameSession.addPlayer(players.first!)
-            } else if players.isEmpty {
-                // If gameSession already has players but local players array is empty, sync them
-                players = gameSession.currentState.players
-            }
-            // Ensure player balances in gameSession are initialized if they aren't
-            gameSession.initializePlayerBalances(for: players)
+            
         }
-        // Observe changes in gameSession.currentState.players to keep players array in sync
-        // This is important if players can be added/removed from other parts of the app via gameSession
-        .onChange(of: gameSession.currentState.players) { newPlayers in
-            players = newPlayers
-        }
-         */
+         
     }
     
     /// Determines whether to show the empty state or the list of players.
@@ -134,6 +118,7 @@ struct HomeView: View {
                                         .accessibilityLabel("Player token name: \(player.token)")
                                 }
                             }
+                            .frame(minHeight: 40)
                             
                             Spacer()
                             

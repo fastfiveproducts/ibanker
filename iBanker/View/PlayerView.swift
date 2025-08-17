@@ -13,6 +13,22 @@ struct PlayerView: View {
     let player: Player
     let playerIndex: Int
     
+    @State private var salaryInput: Int? = nil
+        
+    // A computed property to safely get the integer value of the salary.
+    private var salaryAmount: Int {
+        Int(salaryInput ?? 0)    }
+    
+    // Formatter for the playerSalary field (integers only)
+    private var integerFormatter: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .none
+        formatter.usesGroupingSeparator = false
+        formatter.generatesDecimalNumbers = false
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }
+    
     var body: some View {
         VStack {
             Text(player.name)
@@ -51,17 +67,24 @@ struct PlayerView: View {
                             
                             Spacer()
                             
-                            // Player Balance
-                            /*
-                             TextField()
-                             .font(.title2) // Prominent font for the balance
-                             .fontWeight(.bold)
-                             
-                             .accessibilityLabel("Player balance: \(player.balance) dollars")
-                             */
+                            TextField("Enter Salary", value: $salaryInput, formatter: integerFormatter)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .keyboardType(.numberPad)
+                                .autocorrectionDisabled(true)
+                                .multilineTextAlignment(.trailing)
                         }
                         .padding(5)
                 }
+                
+                Section {
+                    Button("Collect $\(salaryAmount) Salary") {
+                        gameSession.perform(.collectSalary(amount: salaryAmount), by: player.id)
+                    }
+                    .font(.title2)
+                    .padding(5)
+                }
+                
                 Section {
                     HStack {
                         Text("Add $:")
@@ -100,6 +123,18 @@ struct PlayerView: View {
         .navigationTitle("Player #\(playerIndex)") // Sets the title of the detail view's navigation bar
         .navigationBarTitleDisplayMode(.inline) // Makes the title smaller and centered
         .background(Color(.systemGroupedBackground))
+        .onAppear {
+            // When the view loads, set the TextField's text to the stored salary.
+            let currentSalary = gameSession.currentState.playerSalaries[player.id] ?? 200
+            salaryInput = currentSalary
+        }
+        // --- MODIFIED ---
+        // This modifier watches for any changes to the text field's input.
+        .onChange(of: salaryInput) {
+            // As soon as the text changes, update the salary in the GameSession.
+            // This ensures the button's label and the collect salary logic are always in sync.
+            gameSession.perform(.updateSalary(newSalary: salaryAmount), by: player.id)
+        }
     }
 }
 
@@ -109,7 +144,7 @@ struct PlayerView: View {
         let previewGameSession = GameSession(players: [])
 
         // Define your players here
-        let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "car.fill", isLocalOnly: true, salary: 200)
+        let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "car", isLocalOnly: true, salary: 200)
         let playerBob = Player(id: UUID().uuidString, name: "Bob", token: "top.hat.fill", isLocalOnly: true, salary: 200)
 
         // Now, construct your View. All data manipulation will happen inside onAppear.

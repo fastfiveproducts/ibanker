@@ -10,16 +10,8 @@ import Foundation
 import Combine // For ObservableObject and @Published
 
 class GameSession: ObservableObject {
-    @Published var players: [Player] {
-        didSet {
-            objectWillChange.send()
-        }
-    }
-    @Published var transactions: [GameTransaction] {
-        didSet {
-            // objectWillChange.send() // Often not needed for appends if @Published is smart
-        }
-    }
+    @Published var players: [Player]
+    @Published var transactions: [GameTransaction]
     
     // Add a direct reference to SettingsStore
     // You could also initialize it here, or inject it from your App struct.
@@ -27,17 +19,17 @@ class GameSession: ObservableObject {
     // If you plan to have multiple GameSessions (e.g., different saved games),
     // you might want to pass SettingsStore as an initializer parameter.
     var settings: SettingsStore = SettingsStore() // Create or get your shared settings instance
-
+    
     var currentState: GameState {
         GameStateReducer.reduce(players: players, transactions: transactions)
     }
     
     @Published var currentPlayerID: String? // switch with tap in pass-the-phone mode (Future)
-
+        
     // Future: this can map to Google Sheet or Firebase session
     var gameSessionID: String?
     var isSyncedGame: Bool { gameSessionID != nil }
-
+    
     init(players: [Player], transactions: [GameTransaction] = [], currentPlayerID: String? = nil) {
         self.players = players
         self.transactions = transactions
@@ -62,9 +54,9 @@ class GameSession: ObservableObject {
             transactions.removeLast()
         }
     }
-
+    
     // MARK: - Persistence (Example - you'd likely use FileManager, UserDefaults, or CloudKit/Firebase)
-
+    
     // Example: Save to UserDefaults
     func saveGame() {
         if let encodedData = try? JSONEncoder().encode(self.transactions) {
@@ -75,7 +67,7 @@ class GameSession: ObservableObject {
         }
         // Save current player ID, etc.
     }
-
+    
     // Example: Load from UserDefaults
     static func loadGame() -> GameSession? {
         if let transactionData = UserDefaults.standard.data(forKey: "gameTransactions"),
@@ -86,4 +78,5 @@ class GameSession: ObservableObject {
         }
         return nil
     }
+    
 }

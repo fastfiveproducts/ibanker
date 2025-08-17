@@ -97,6 +97,11 @@ struct AddNewPlayerView: View {
                         if finalBalance != 0 {
                             gameSession.perform(.addMoney(amount: finalBalance), by: newPlayer.id)
                         }
+                        
+                        if finalSalary != 0 {
+                            gameSession.perform(.updateSalary(newSalary: finalSalary), by: newPlayer.id)
+                        }
+
 
                         dismiss() // Dismiss the sheet
                     }

@@ -12,5 +12,6 @@ enum GameAction: Codable, Equatable {
     case payPlayer(_ playerID: String, amount: Int)
     case addMoney(amount: Int)
     case subtractMoney(amount: Int)
+    case updateSalary(newSalary: Int)
     case custom(description: String)
 }

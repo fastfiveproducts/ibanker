@@ -29,6 +29,11 @@ struct ibankerInterfaceDesignApp: App {
         WindowGroup {
             MainTabView()
                 .environmentObject(gameSession) // This line is key!
+                .onDisappear {
+                    // This is a good place to save the game when the app is being closed
+                    // or moved to the background.
+                    gameSession.saveGame()
+                }
         }
     }
 }

@@ -139,7 +139,7 @@ struct AddNewPlayerView: View {
     let sampleSettings = SettingsStore()
     sampleSettings.selectedGameMode = .monopoly // Or .custom for testing custom fields
 
-    let sampleGameSession = GameSession(players: []) // Add player data if needed for preview
+    let sampleGameSession = GameSession() // Add player data if needed for preview
     sampleGameSession.settings = sampleSettings // Inject the sample settings
 
     return AddNewPlayerView(onSave: { player in

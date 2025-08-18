@@ -10,7 +10,6 @@ import SwiftUI
 struct HomeView: View {
     // @State property to hold our list of players.
     // @State ensures that the UI updates when this array changes.
-    @State private var players: [Player] = []
     @EnvironmentObject var gameSession: GameSession // Access the shared game session
     @State private var showingAddPlayerSheet = false
 
@@ -28,7 +27,7 @@ struct HomeView: View {
         .sheet(isPresented: $showingAddPlayerSheet) {
             // When the sheet is dismissed, this closure receives the new player.
             AddNewPlayerView { newPlayer in
-                players.append(newPlayer) // Add the new player to the list
+                gameSession.players.append(newPlayer) // Add the new player to the list
             }
         }
         
@@ -41,7 +40,7 @@ struct HomeView: View {
     /// Determines whether to show the empty state or the list of players.
     @ViewBuilder
     private var contentView: some View {
-        if players.isEmpty {
+        if gameSession.players.isEmpty {
             emptyPlayersView
         } else {
             playersListView
@@ -103,7 +102,7 @@ struct HomeView: View {
     private var playersListView: some View {
         VStack {
             List {
-                ForEach(Array(players.enumerated()), id: \.element.id) { index, player in
+                ForEach(Array(gameSession.players.enumerated()), id: \.element.id) { index, player in
                     NavigationLink(destination: PlayerView(player: player, playerIndex: index + 1)) {
                         HStack {
                             VStack(alignment: .leading) {
@@ -146,7 +145,7 @@ struct HomeView: View {
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .topBarLeading) {
-            if !players.isEmpty {
+            if !gameSession.players.isEmpty {
                 EditButton()
             } else {
                 // Optionally, add a different leading item for the empty state
@@ -168,18 +167,18 @@ struct HomeView: View {
     // Function to add a new placeholder player.
     
     private func deletePlayer(at offsets: IndexSet) {
-        players.remove(atOffsets: offsets)
+        gameSession.players.remove(atOffsets: offsets)
     }
 
     // Function to move players within the list.
     // This is required for the EditButton's reordering functionality.
     private func movePlayer(from source: IndexSet, to destination: Int) {
-        players.move(fromOffsets: source, toOffset: destination)
+        gameSession.players.move(fromOffsets: source, toOffset: destination)
     }
 }
 
 #Preview {
-    let sampleGameSession = GameSession(players: [])
+    let sampleGameSession = GameSession()
     HomeView()
         .environmentObject(sampleGameSession)
 }

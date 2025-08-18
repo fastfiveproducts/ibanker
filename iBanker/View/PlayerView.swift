@@ -141,7 +141,7 @@ struct PlayerView: View {
 #Preview("Player #1") {
         // Create the GameSession instance *outside* the ViewBuilder's direct scope.
         // It's a class, so it's a reference type.
-        let previewGameSession = GameSession(players: [])
+        let previewGameSession = GameSession()
 
         // Define your players here
         let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "car", isLocalOnly: true, salary: 200)
@@ -169,7 +169,7 @@ struct PlayerView: View {
 #Preview("Player #2") {
         // Create the GameSession instance *outside* the ViewBuilder's direct scope.
         // It's a class, so it's a reference type.
-        let previewGameSession = GameSession(players: [])
+        let previewGameSession = GameSession()
 
         // Define your players here
         let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "red", isLocalOnly: true, salary: 200)

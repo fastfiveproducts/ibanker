@@ -26,7 +26,7 @@
 		BDEE77182E4F914300597AFE /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE77172E4F914300597AFE /* SwiftUI.framework */; };
 		BDEE771A2E4F914D00597AFE /* Combine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE77192E4F914D00597AFE /* Combine.framework */; };
 		BDEE771C2E4F91F800597AFE /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE771B2E4F91F800597AFE /* Metal.framework */; };
-		BDEE771E2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE771D2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift */; };
+		BDEE771E2E4F9A2700597AFE /* iBankerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE771D2E4F9A2700597AFE /* iBankerApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,7 +51,7 @@
 		BDEE77172E4F914300597AFE /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		BDEE77192E4F914D00597AFE /* Combine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Combine.framework; path = System/Library/Frameworks/Combine.framework; sourceTree = SDKROOT; };
 		BDEE771B2E4F91F800597AFE /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
-		BDEE771D2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ibankerInterfaceDesignApp.swift; sourceTree = "<group>"; };
+		BDEE771D2E4F9A2700597AFE /* iBankerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iBankerApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -116,7 +116,7 @@
 				BDEE77482E5111C700597AFE /* ViewSupport */,
 				BDEE76922E4BFBB300597AFE /* Store */,
 				B546DF1F1BDBCC360006D303 /* Assets.xcassets */,
-				BDEE771D2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift */,
+				BDEE771D2E4F9A2700597AFE /* iBankerApp.swift */,
 				B546DF241BDBCC360006D303 /* Info.plist */,
 			);
 			path = iBanker;
@@ -245,7 +245,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BDA6C64A2E42FB0400A933EA /* GameSession.swift in Sources */,
-				BDEE771E2E4F9A2700597AFE /* ibankerInterfaceDesignApp.swift in Sources */,
+				BDEE771E2E4F9A2700597AFE /* iBankerApp.swift in Sources */,
 				BDA6C64B2E42FB0400A933EA /* GameTransaction.swift in Sources */,
 				BDA6C64C2E42FB0400A933EA /* GameMode.swift in Sources */,
 				BDEE76932E4BFBB300597AFE /* SettingsStore.swift in Sources */,

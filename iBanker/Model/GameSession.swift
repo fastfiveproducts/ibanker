@@ -7,9 +7,12 @@
 
 
 import Foundation
-import Combine // For ObservableObject and @Published
+import SwiftUI
 
 class GameSession: ObservableObject {
+    @AppStorage("gamePlayers") private var playersData: Data = Data()
+    @AppStorage("gameTransactions") private var transactionsData: Data = Data()
+    
     @Published var players: [Player]
     @Published var transactions: [GameTransaction]
     
@@ -30,10 +33,29 @@ class GameSession: ObservableObject {
     var gameSessionID: String?
     var isSyncedGame: Bool { gameSessionID != nil }
     
-    init(players: [Player], transactions: [GameTransaction] = [], currentPlayerID: String? = nil) {
-        self.players = players
-        self.transactions = transactions
-        self.currentPlayerID = currentPlayerID
+    init() {
+        // Phase 1: Initialize all stored properties with a default value.
+        // We MUST NOT use 'self' here. We use direct access to UserDefaults.
+        // This is a special exception to the two-phase initialization rule.
+        
+        let initialPlayers = (try? JSONDecoder().decode([Player].self, from: UserDefaults.standard.data(forKey: "gamePlayers") ?? Data())) ?? []
+        
+        let initialTransactions = (try? JSONDecoder().decode([GameTransaction].self, from: UserDefaults.standard.data(forKey: "gameTransactions") ?? Data())) ?? []
+        
+        self.players = initialPlayers
+        self.transactions = initialTransactions
+    }
+    
+    func saveGame() {
+        if let encodedPlayers = try? JSONEncoder().encode(self.players) {
+            self.playersData = encodedPlayers
+            print("Players saved successfully!")
+        }
+        
+        if let encodedTransactions = try? JSONEncoder().encode(self.transactions) {
+            self.transactionsData = encodedTransactions
+            print("Transactions saved successfully!")
+        }
     }
     
     // Add a transaction
@@ -58,25 +80,5 @@ class GameSession: ObservableObject {
     // MARK: - Persistence (Example - you'd likely use FileManager, UserDefaults, or CloudKit/Firebase)
     
     // Example: Save to UserDefaults
-    func saveGame() {
-        if let encodedData = try? JSONEncoder().encode(self.transactions) {
-            UserDefaults.standard.set(encodedData, forKey: "gameTransactions")
-        }
-        if let encodedPlayers = try? JSONEncoder().encode(self.players) {
-            UserDefaults.standard.set(encodedPlayers, forKey: "gamePlayers")
-        }
-        // Save current player ID, etc.
-    }
-    
-    // Example: Load from UserDefaults
-    static func loadGame() -> GameSession? {
-        if let transactionData = UserDefaults.standard.data(forKey: "gameTransactions"),
-           let loadedTransactions = try? JSONDecoder().decode([GameTransaction].self, from: transactionData),
-           let playerData = UserDefaults.standard.data(forKey: "gamePlayers"),
-           let loadedPlayers = try? JSONDecoder().decode([Player].self, from: playerData) {
-            return GameSession(players: loadedPlayers, transactions: loadedTransactions)
-        }
-        return nil
-    }
     
 }

@@ -139,6 +139,8 @@ struct HomeView: View {
                 gameSession.saveGame()
             }
         }
+
+        .background(Color(.systemGroupedBackground))
     }
     
     /// The content for the toolbar.

@@ -14,10 +14,19 @@ struct PlayerView: View {
     let playerIndex: Int
     
     @State private var salaryInput: Int? = nil
-        
-    // A computed property to safely get the integer value of the salary.
+    @State private var addInput: Int? = nil
+    @State private var subtractInput: Int? = nil
+    @State private var sendInput: Int? = nil
+    @State private var selectedPlayer: Player? = nil
+
     private var salaryAmount: Int {
         Int(salaryInput ?? 0)    }
+    private var addAmount: Int {
+        Int(addInput ?? 0)    }
+    private var subtractAmount: Int {
+        Int(subtractInput ?? 0)    }
+    private var sendAmount: Int {
+        Int(sendInput ?? 0)    }
     
     // Formatter for the playerSalary field (integers only)
     private var integerFormatter: NumberFormatter {
@@ -90,12 +99,38 @@ struct PlayerView: View {
                         Text("Add $:")
                             .font(.title2)
                         Spacer()
+                        TextField("Enter Amount", value: $addInput, formatter: integerFormatter)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .keyboardType(.numberPad)
+                            .autocorrectionDisabled(true)
+                            .multilineTextAlignment(.trailing)
+                        Button {
+                            gameSession.perform(.addMoney(amount: addAmount), by: player.id)
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.title)
+                                .foregroundColor(.green)
+                        }
                     }
                     .padding(5)
                     HStack {
                         Text("Subtract $:")
                             .font(.title2)
                         Spacer()
+                        TextField("Enter Amount", value: $subtractInput, formatter: integerFormatter)
+                            .font(.title2)
+                            .fontWeight(.bold)
+                            .keyboardType(.numberPad)
+                            .autocorrectionDisabled(true)
+                            .multilineTextAlignment(.trailing)
+                        Button {
+                            gameSession.perform(.subtractMoney(amount: subtractAmount), by: player.id)
+                        } label: {
+                            Image(systemName: "minus.circle.fill")
+                                .font(.title)
+                                .foregroundColor(.red)
+                        }
                     }
                     .padding(5)
                     VStack {
@@ -103,13 +138,39 @@ struct PlayerView: View {
                             Text("Send Amount:")
                                 .font(.title2)
                             Spacer()
-                            
+                            TextField("Enter Amount", value: $sendInput, formatter: integerFormatter)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .keyboardType(.numberPad)
+                                .autocorrectionDisabled(true)
+                                .multilineTextAlignment(.trailing)
                         }
                         HStack {
                             Text("to player:")
                                 .font(.title2)
                             Spacer()
-                            
+                            Menu {
+                                ForEach(gameSession.players.filter { $0.id != player.id }) { otherPlayer in
+                                    Button(action: {
+                                        self.selectedPlayer = otherPlayer
+                                    }) {
+                                        Text(otherPlayer.name)
+                                    }
+                                }
+                            } label: {
+                                Label(selectedPlayer?.name ?? "Select Player", systemImage: "chevron.down")
+                                    .font(.headline)
+                            }
+                            Button {
+                                if let selectedPlayer = selectedPlayer {
+                                    gameSession.perform(.payPlayer(selectedPlayer.id, amount: sendAmount), by: player.id)
+                                }
+                            } label: {
+                                Image(systemName: "arrow.up.circle.fill")
+                                    .font(.title)
+                                    .foregroundColor(selectedPlayer == nil ? .gray : .blue)
+                            }
+                            .disabled(selectedPlayer == nil)
                         }
                     }
                     .padding(5)

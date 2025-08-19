@@ -21,14 +21,6 @@ struct AddNewPlayerView: View {
     // A closure to pass the new Player object back to the HomeView.
     var onSave: (Player) -> Void
     
-    private var currencyFormatter: NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.minimumFractionDigits = 2
-        formatter.maximumFractionDigits = 2
-        return formatter
-    }
-    
     // Formatter for the playerSalary field (integers only)
     private var integerFormatter: NumberFormatter {
         let formatter = NumberFormatter()
@@ -61,7 +53,7 @@ struct AddNewPlayerView: View {
                         Text("Balance:")
                         HStack(spacing: 0) {
                             Text("$")
-                            TextField("Initial Balance", value: $playerBalance, formatter: currencyFormatter)
+                            TextField("Initial Balance", value: $playerBalance, formatter: integerFormatter)
                                 .keyboardType(.decimalPad)
                                 .autocorrectionDisabled()
                         }

@@ -8,6 +8,7 @@
 
 import Foundation
 class GameStateReducer {
+    
     static func reduce(players: [Player], transactions: [GameTransaction]) -> GameState {
         // 1. Initialize the starting state
         var currentGameState = GameState(playerBalances: [:], playerSalaries: [:])
@@ -44,6 +45,10 @@ class GameStateReducer {
                 
             case .updateSalary(let newSalary):
                 currentPlayerSalary = newSalary
+                
+            case .resetPlayer(let balance, let salary):
+                currentPlayerBalance = balance
+                currentPlayerSalary = salary
 
             case .custom(let description):
                 // For custom actions, you'd need more logic or

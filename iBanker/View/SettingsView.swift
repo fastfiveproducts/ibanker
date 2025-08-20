@@ -22,6 +22,8 @@ import SwiftUI
 
 struct SettingsView: View {
     @StateObject private var settings = SettingsStore()
+    @EnvironmentObject private var gameSession: GameSession
+    @State private var showingAlert = false
     
     var showTitle: Bool = true
     
@@ -35,12 +37,12 @@ struct SettingsView: View {
                     Spacer()
                 }
             }
-            
             Form {
+                /*
                 Section ("Preferences"){
-                    Toggle("Dark Mode", isOn: $settings.darkMode)
                     Toggle("Sound effects", isOn: $settings.soundEffects)
                 }
+                 */
                 // MARK: - Game Mode Settings
                 Section("Game Mode Defaults") {
                     Picker("Game Mode", selection: $settings.selectedGameMode) {
@@ -84,6 +86,23 @@ struct SettingsView: View {
                         }
                     }
                 }
+                Section {
+                    Button("Reset Players") {
+                        showingAlert = true
+                    }
+                    .alert(isPresented: $showingAlert) {
+                        // 4. Define the content of the alert.
+                        Alert(
+                            title: Text("Confirm Reset"),
+                            message: Text("Are you sure you want to reset players? Each player's balance and salary will return to default settings."),
+                            primaryButton: .destructive(Text("Reset")) {
+                                resetPlayers()
+                            },
+                            secondaryButton: .cancel(Text("Cancel")) {
+                            }
+                        )
+                    }
+                }
             }
             
             Spacer()
@@ -96,10 +115,18 @@ struct SettingsView: View {
         .padding()
         .background(Color(.systemGroupedBackground))
     }
+    
+    private func resetPlayers() {
+        for player in gameSession.players{
+            gameSession.perform(.resetPlayer(balance: gameSession.settings.effectiveDefaultBalance, salary: gameSession.settings.effectiveDefaultSalary), by: player.id)
+        }
+    }
 }
 
-#if DEBUG
+
 #Preview {
+    let sampleGameSession = GameSession()
     SettingsView(showTitle: true)
+        .environmentObject(sampleGameSession)
 }
-#endif
+

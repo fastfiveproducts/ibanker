@@ -21,11 +21,10 @@ import Foundation
 import SwiftUI
 
 class SettingsStore: ObservableObject {
-    @AppStorage("darkMode") var darkMode = false
     @AppStorage("soundEffects") var soundEffects = true
 
     // New properties for Game Mode settings
-    @AppStorage("selectedGameMode") var selectedGameMode: GameMode = .monopoly // Default to Monopoly
+    @AppStorage("selectedGameMode") var selectedGameMode: GameMode = .zero
     @AppStorage("customInitialBalance") var customInitialBalance: Int = 0
     @AppStorage("customInitialSalary") var customInitialSalary: Int = 0
 
@@ -48,9 +47,8 @@ class SettingsStore: ObservableObject {
     }
     
     func resetAllSettings() {
-        darkMode = false
         soundEffects = true
-        selectedGameMode = .monopoly // Reset to default mode
+        selectedGameMode = .zero
         customInitialBalance = 0 // Reset custom values
         customInitialSalary = 0
     }

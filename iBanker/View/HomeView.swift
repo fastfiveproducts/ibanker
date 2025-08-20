@@ -135,9 +135,6 @@ struct HomeView: View {
                 .onMove(perform: movePlayer)
             }
             Spacer()
-            Button("Save") {
-                gameSession.saveGame()
-            }
         }
 
         .background(Color(.systemGroupedBackground))

@@ -13,5 +13,6 @@ enum GameAction: Codable, Equatable {
     case addMoney(amount: Int)
     case subtractMoney(amount: Int)
     case updateSalary(newSalary: Int)
+    case resetPlayer(balance: Int, salary: Int)
     case custom(description: String)
 }

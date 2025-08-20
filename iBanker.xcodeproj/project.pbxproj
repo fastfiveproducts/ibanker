@@ -27,6 +27,7 @@
 		BDEE771A2E4F914D00597AFE /* Combine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE77192E4F914D00597AFE /* Combine.framework */; };
 		BDEE771C2E4F91F800597AFE /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDEE771B2E4F91F800597AFE /* Metal.framework */; };
 		BDEE771E2E4F9A2700597AFE /* iBankerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE771D2E4F9A2700597AFE /* iBankerApp.swift */; };
+		BDEE783E2E5562DE00597AFE /* ActivityLogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEE783D2E5562DE00597AFE /* ActivityLogEntry.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		BDEE77192E4F914D00597AFE /* Combine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Combine.framework; path = System/Library/Frameworks/Combine.framework; sourceTree = SDKROOT; };
 		BDEE771B2E4F91F800597AFE /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		BDEE771D2E4F9A2700597AFE /* iBankerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iBankerApp.swift; sourceTree = "<group>"; };
+		BDEE783D2E5562DE00597AFE /* ActivityLogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLogEntry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -68,6 +70,11 @@
 		BDEE77BB2E5111F400597AFE /* ModelSupport */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ModelSupport;
+			sourceTree = "<group>";
+		};
+		BDEE783F2E55631A00597AFE /* Utilities */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -109,6 +116,7 @@
 		B546DF0F1BDBCC360006D303 /* iBanker */ = {
 			isa = PBXGroup;
 			children = (
+				BDEE783F2E55631A00597AFE /* Utilities */,
 				BDA6C6482E42FB0400A933EA /* Model */,
 				BDEE77BB2E5111F400597AFE /* ModelSupport */,
 				BDEE769B2E4BFBCF00597AFE /* View */,
@@ -127,6 +135,7 @@
 			children = (
 				BDA6C6412E42FB0400A933EA /* GameAction.swift */,
 				BDA6C6422E42FB0400A933EA /* GameMode.swift */,
+				BDEE783D2E5562DE00597AFE /* ActivityLogEntry.swift */,
 				BDA6C6432E42FB0400A933EA /* GameSession.swift */,
 				BDA6C6462E42FB0400A933EA /* GameTransaction.swift */,
 				BDA6C6472E42FB0400A933EA /* PlayerModel.swift */,
@@ -186,6 +195,7 @@
 				BDEE77482E5111C700597AFE /* ViewSupport */,
 				BDEE77BA2E5111EA00597AFE /* ViewModel */,
 				BDEE77BB2E5111F400597AFE /* ModelSupport */,
+				BDEE783F2E55631A00597AFE /* Utilities */,
 			);
 			name = iBanker;
 			productName = GameCalc;
@@ -247,6 +257,7 @@
 				BDA6C64A2E42FB0400A933EA /* GameSession.swift in Sources */,
 				BDEE771E2E4F9A2700597AFE /* iBankerApp.swift in Sources */,
 				BDA6C64B2E42FB0400A933EA /* GameTransaction.swift in Sources */,
+				BDEE783E2E5562DE00597AFE /* ActivityLogEntry.swift in Sources */,
 				BDA6C64C2E42FB0400A933EA /* GameMode.swift in Sources */,
 				BDEE76932E4BFBB300597AFE /* SettingsStore.swift in Sources */,
 				BDA6C64D2E42FB0400A933EA /* GameAction.swift in Sources */,

@@ -158,9 +158,9 @@ struct PlayerView: View {
                                     }
                                 }
                             } label: {
-                                Label(selectedPlayer?.name ?? "Select Player", systemImage: "chevron.down")
-                                    .font(.headline)
+                                Label(selectedPlayer?.name ?? "Select Player", systemImage: "chevron.down.circle.fill")
                             }
+                            .buttonStyle(.bordered)
                             Button {
                                 if let selectedPlayer = selectedPlayer {
                                     gameSession.perform(.payPlayer(selectedPlayer.id, amount: sendAmount), by: player.id)

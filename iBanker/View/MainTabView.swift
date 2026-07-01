@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 // MARK: - Main Tab Bar View
 struct MainTabView: View {
+    @EnvironmentObject private var gameSession: GameSession
+    @Environment(\.modelContext) private var modelContext
+
     // State to keep track of the currently selected tab
     @State private var selectedTab: Tab = .home
 
@@ -40,6 +44,11 @@ struct MainTabView: View {
         }
         // Apply the accent color to the selected tab item
         .accentColor(.accentColor) // Using .accentColor will pick up the accent color defined in your Asset Catalog or the system default
+        // Hand the shared GameSession the SwiftData context so performed actions
+        // are recorded to the Activity Log (see GameSession.perform).
+        .task {
+            gameSession.modelContext = modelContext
+        }
     }
 }
 
@@ -53,4 +62,6 @@ enum Tab {
 
 #Preview {
     MainTabView()
+        .environmentObject(GameSession())
+        .modelContainer(for: ActivityLogEntry.self, inMemory: true)
 }

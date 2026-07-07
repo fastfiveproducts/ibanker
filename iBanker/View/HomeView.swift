@@ -1,8 +1,21 @@
 //
 //  HomeView.swift
-//  ibankerInterfaceDesign
 //
-//  Created by Elizabeth Maiser on 7/16/25.
+//  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//
+//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
+//
+//  Copyright © 2025 Fast Five Products LLC. All rights reserved.
+//
+//  This file is part of a project licensed under the GNU Affero General Public License v3.0.
+//  See the LICENSE file at the root of this repository for full terms.
+//
+//  An exception applies: Fast Five Products LLC retains the right to use this code and
+//  derivative works in proprietary software without being subject to the AGPL terms.
+//  See LICENSE-EXCEPTIONS.md for details.
+//
+//  For licensing inquiries, contact: licenses@fastfiveproducts.llc
 //
 
 import SwiftUI
@@ -11,11 +24,15 @@ struct HomeView: View {
     // @State property to hold our list of players.
     // @State ensures that the UI updates when this array changes.
     @EnvironmentObject var gameSession: GameSession // Access the shared game session
+    @EnvironmentObject private var settings: SettingsStore // For the spinner toolbar affordance (#21)
     @State private var showingAddPlayerSheet = false
+    @State private var showingSpinnerSheet = false
 
     var body: some View {
-        // NavigationView provides the navigation bar and allows for navigation links.
-        NavigationView {
+        // NavigationStack provides the navigation bar and allows for navigation links.
+        // (Was the deprecated NavigationView, whose accidental two-column split on
+        // iPad caused the add-player bugs #12/#13.)
+        NavigationStack {
             contentView
                 .navigationTitle("Players") // Title for the navigation bar
                 .toolbar {
@@ -29,6 +46,11 @@ struct HomeView: View {
             AddNewPlayerView { newPlayer in
                 gameSession.players.append(newPlayer) // Add the new player to the list
             }
+        }
+
+        // Spin to Win (#21) — reachable via the toolbar when enabled
+        .sheet(isPresented: $showingSpinnerSheet) {
+            SpinnerView()
         }
         
         .onAppear {
@@ -105,6 +127,8 @@ struct HomeView: View {
                 ForEach(Array(gameSession.players.enumerated()), id: \.element.id) { index, player in
                     NavigationLink(destination: PlayerView(player: player, playerIndex: index + 1)) {
                         HStack {
+                            PlayerThumbnailView(imageData: player.imageData, size: 44)
+
                             VStack(alignment: .leading) {
                                 Text(player.name)
                                     .font(.headline)
@@ -153,6 +177,20 @@ struct HomeView: View {
         }
 
         ToolbarItem(placement: .topBarTrailing) {
+            // Spin-to-Win entry point, shown only when the spinner is
+            // enabled (auto-on for the $400K mode) — mirrors the v1.3.0
+            // conditional toolbar button.
+            if settings.enabledSpinner {
+                Button(action: {
+                    showingSpinnerSheet = true
+                }) {
+                    Image(systemName: "arrow.triangle.2.circlepath")
+                        .accessibilityLabel("Spin to Win")
+                }
+            }
+        }
+
+        ToolbarItem(placement: .topBarTrailing) {
             Button(action: {
                 showingAddPlayerSheet = true
             }) {
@@ -180,4 +218,5 @@ struct HomeView: View {
     let sampleGameSession = GameSession()
     HomeView()
         .environmentObject(sampleGameSession)
+        .environmentObject(sampleGameSession.settings)
 }

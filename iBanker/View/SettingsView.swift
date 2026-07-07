@@ -2,8 +2,9 @@
 //  SettingsView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/4/25.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
 //
-//  Template v0.2.0 — Fast Five Products LLC's public AGPL template.
+//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
 //  Copyright © 2025 Fast Five Products LLC. All rights reserved.
 //
@@ -21,7 +22,9 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @StateObject private var settings = SettingsStore()
+    // The single shared SettingsStore, injected from iBankerApp (#13) —
+    // do not create additional SettingsStore instances in app code.
+    @EnvironmentObject private var settings: SettingsStore
     @EnvironmentObject private var gameSession: GameSession
     @State private var showingAlert = false
     
@@ -38,11 +41,10 @@ struct SettingsView: View {
                 }
             }
             Form {
-                /*
                 Section ("Preferences"){
                     Toggle("Sound effects", isOn: $settings.soundEffects)
+                    Toggle("Spin-to-Win Spinner", isOn: $settings.enabledSpinner)
                 }
-                 */
                 // MARK: - Game Mode Settings
                 Section("Game Mode Defaults") {
                     Picker("Game Mode", selection: $settings.selectedGameMode) {
@@ -104,7 +106,13 @@ struct SettingsView: View {
                     }
                 }
             }
-            
+            .onChange(of: settings.selectedGameMode) {
+                // Changing the mode resets the spinner to the mode's default
+                // (v1.3.0 behavior); the Preferences Toggle remains a manual
+                // override.
+                settings.enabledSpinner = settings.selectedGameMode.defaultSpinnerOn
+            }
+
             Spacer()
             Button("Reset All Settings") {
                 withAnimation {
@@ -118,8 +126,10 @@ struct SettingsView: View {
     
     private func resetPlayers() {
         for player in gameSession.players{
-            gameSession.perform(.resetPlayer(balance: gameSession.settings.effectiveDefaultBalance, salary: gameSession.settings.effectiveDefaultSalary), by: player.id)
+            gameSession.perform(.resetPlayer(balance: settings.effectiveDefaultBalance, salary: settings.effectiveDefaultSalary), by: player.id)
         }
+        // One shake for the whole reset (not per player), matching v1.3.0
+        SoundPlayer.shared.playSystemSound(.shake)
     }
 }
 
@@ -128,5 +138,6 @@ struct SettingsView: View {
     let sampleGameSession = GameSession()
     SettingsView(showTitle: true)
         .environmentObject(sampleGameSession)
+        .environmentObject(sampleGameSession.settings)
 }
 

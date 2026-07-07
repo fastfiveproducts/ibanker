@@ -24,7 +24,7 @@ class SettingsStore: ObservableObject {
     @AppStorage("soundEffects") var soundEffects = true
 
     // New properties for Game Mode settings
-    @AppStorage("selectedGameMode") var selectedGameMode: GameMode = .zero
+    @AppStorage("selectedGameMode") var selectedGameMode: GameMode = .fifteenHundred
     @AppStorage("customInitialBalance") var customInitialBalance: Int = 0
     @AppStorage("customInitialSalary") var customInitialSalary: Int = 0
 
@@ -48,7 +48,7 @@ class SettingsStore: ObservableObject {
     
     func resetAllSettings() {
         soundEffects = true
-        selectedGameMode = .zero
+        selectedGameMode = .fifteenHundred
         customInitialBalance = 0 // Reset custom values
         customInitialSalary = 0
     }

@@ -11,7 +11,7 @@ Monopoly and The Game of Life are registered trademarks of Hasbro, Inc. Spin to 
 
 Release Updates:
 
-R2.0 --- Complete rewrite in Swift and SwiftUI!  Player photos, sound effects, a $1500-game default Mode, and a refreshed look throughout.  License changed to AGPL-3.0.
+R2.0 --- Complete rewrite in Swift and SwiftUI, with a refreshed look throughout and all the classic features carried forward.  License changed to AGPL-3.0.
 
 R1.3 --- Updated description and other small changes.
 

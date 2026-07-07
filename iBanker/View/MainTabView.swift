@@ -51,7 +51,7 @@ struct MainTabView: View {
             TabView(selection: $selectedTabItem) {
                 HomeView(showingAddPlayerSheet: $showingAddPlayerSheet,
                          selectedTab: $selectedTabItem)
-                    .tabItem { Label("Home", systemImage: "house.fill") }
+                    .tabItem { Label("Players", systemImage: "person.3.fill") }
                     .tag(Tab.home)
 
                 ActivityLogView()
@@ -101,6 +101,16 @@ extension MainTabView {
     // MainTabView and gates items on the selected tab / app state)
     @ToolbarContentBuilder
     var mainToolbar: some ToolbarContent {
+        // Brand mark: the principal item replaces the plain inline title with
+        // a bold, brand-colored wordmark (navigationTitle remains set for
+        // back-button labels and accessibility).
+        ToolbarItem(placement: .principal) {
+            Text(AppConfig.brandName)
+                .font(.headline)
+                .fontWeight(.bold)
+                .foregroundStyle(AppConfig.brandColor)
+        }
+
         ToolbarItem(placement: .topBarLeading) {
             if selectedTabItem == .home && !gameSession.players.isEmpty {
                 // Custom edit toggle bound to the injected editMode (see the

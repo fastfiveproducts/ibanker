@@ -46,13 +46,13 @@ struct AppConfig {
     static let supportURL = URL(string: "https://www.fastfiveproducts.llc/")!
 
     // Fixed Colors
-    // Neutral, adaptive template defaults. The pre-upgrade AppColor palette is
-    // preserved below for future branding:
+    // brandColor is iBanker's classic dark green. The rest of the pre-upgrade
+    // AppColor palette is preserved here for future branding:
     //   darkGreen  121/153/78    lightGreen 183/231/118
     //   offWhite   242/242/228   darkGray    41/41/38
     //   lightGray   97/97/84     red        231/118/127
     static let brandColor: Color =
-        Color(.secondaryLabel)
+        Color(red: 121/255, green: 153/255, blue: 78/255)
 
     static let linkColor: Color =
         Color.accentColor

@@ -65,6 +65,14 @@ struct HomeView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
 
+            // Tagline carried forward from the original Objective-C app's
+            // first-launch screen
+            Text("iBanker takes the place of paper money in board games!")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
             Button(action: {
                 selectedTab = .settings
             }) {

@@ -1,18 +1,19 @@
 This app is known as "iBanker", available for iOS (iPhone and iPad).  iBanker replaces paper money in board games like Monopoly® and The Game of Life®! Avoid the hassle of counting cash - keep the paper money in the box and use iBanker instead! With features to send money to and from “the bank”, as well as directly from one player to another, iBanker completely replaces paper money and the job of “banker” in board games.
 
-Add and manage players with the user-friendly iOS interface. All of the information is saved when you leave the app, enabling easy breaks in the gameplay, and an Activity Log keeps track of every transaction. Change the “Mode” in settings to automatically set the starting bank account value to match any of the most popular games. When you are ready to start a new game, “Reset Players” in settings to reset all players back to the starting bank account value.
+Add and manage players with the user-friendly iOS interface, including a photo for each player. All of the information is saved when you leave the app, enabling easy breaks in the gameplay, and an Activity Log keeps track of every transaction. Sound effects give each transaction satisfying feedback (and can be turned off in Settings). Change the “Mode” in Settings to automatically set the starting bank account balance and salary to match any of the most popular games - the classic $1500 game is the default. When you are ready to start a new game, “Reset Players” in Settings to reset all players back to the starting bank account value.
 
-The Spinner feature provides the Spin to Win® function for the electronic banking version of The Game of Life®.  It is automatically enabled for the $400,000 Mode.
+The Spinner feature provides the Spin to Win® function for the electronic banking version of The Game of Life®.  It is automatically enabled for the $400K Mode.
 
+This app project was started by Peter James Maiser (Pete Maiser) in 2015, the app was first released on the Apple App Store in 2016, and this code was first published on GitHub under the MIT license in 2017.  Release 2.0 is a complete rewrite in Swift and SwiftUI, licensed under the GNU Affero General Public License v3.0 - LICENSE and LICENSE-EXCEPTIONS.md files are included.
 
-This app project was started by Peter James Maiser (Pete Maiser) in 2015, the app was first released on the Apple App Store in 2016, and this code was first published on GitHub under the MIT license in 2017.  A LICENSE file is included.
-
-Monopoly and The Game of Life and are registered trademarks of Hasbro, Inc. Spin to Win is a registered trademark of The Trustee of the Reuben B. Klamer L.T. The author of this application is not affiliated with with those trademark owners, nor is this application endorsed by, supported by, or in any other way connected with those registered trademark owners.
+Monopoly and The Game of Life are registered trademarks of Hasbro, Inc. Spin to Win is a registered trademark of The Trustee of the Reuben B. Klamer L.T. The author of this application is not affiliated with those trademark owners, nor is this application endorsed by, supported by, or in any other way connected with those registered trademark owners.
 
 
 Release Updates:
 
-R1.3 --- Updated description and other small changes, another new version coming soon!
+R2.0 --- Complete rewrite in Swift and SwiftUI!  Player photos, sound effects, a $1500-game default Mode, and a refreshed look throughout.  License changed to AGPL-3.0.
+
+R1.3 --- Updated description and other small changes.
 
 R1.2 --- Addressed deprecated iOS functions.  Other small changes.
 

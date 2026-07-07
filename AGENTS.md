@@ -14,7 +14,7 @@ xcodebuild build -project iBanker.xcodeproj -scheme "iBanker" -destination 'plat
 
 ## What This App Is
 
-iBanker replaces paper money and the "banker" role in board games (Monopoly®, The Game of Life®, etc.). Players send money to/from "the bank" and to each other; everything persists across app launches. It is iOS-only (iPhone/iPad), SwiftUI, iOS 18+. First released on the App Store in 2016 and open-sourced under MIT in 2017 (see `LICENSE`); this branch is a SwiftUI rewrite.
+iBanker replaces paper money and the "banker" role in board games (Monopoly®, The Game of Life®, etc.). Players send money to/from "the bank" and to each other; everything persists across app launches. It is iOS-only (iPhone/iPad), SwiftUI, iOS 18+. First released on the App Store in 2016 and originally open-sourced under MIT in 2017; as of v2.0.0 it is licensed AGPL-3.0 with the Fast Five Products LLC author exception (see `LICENSE` and `LICENSE-EXCEPTIONS.md`). This branch is a SwiftUI rewrite.
 
 
 ## Architecture
@@ -35,8 +35,8 @@ Player **balances and salaries are never stored directly**. `gameSession.current
 - `SettingsStore` persists individual settings via `@AppStorage` (`selectedGameMode`, `customInitialBalance`, `customInitialSalary`, `soundEffects`).
 - `GameMode` defines preset starting balances/salaries per popular game; `SettingsStore.effectiveDefaultBalance/Salary` resolve the active mode (or custom values).
 
-### Activity Log — a separate store
-`ActivityLogView` reads `ActivityLogEntry` (a SwiftData `@Model`) via `@Query`, using `@Environment(\.modelContext)`. **This is independent of the transaction log** — it is a second, parallel persistence mechanism and is not currently fed by `GameSession` transactions. Wiring these together is rewrite work, not existing behavior.
+### Activity Log — a derived SwiftData store
+`ActivityLogView` reads `ActivityLogEntry` (a SwiftData `@Model`) via `@Query`, using `@Environment(\.modelContext)`. The log is **fed by the transaction log as a derived side effect**: every `gameSession.perform(...)` also inserts a human-readable `ActivityLogEntry` (the container is attached in `iBankerApp`; the context is handed to `GameSession` in `MainTabView`). The transaction log remains the single source of truth — the Activity Log is presentation history, never a second source of state (note: `undoLastTransaction()`/"Clear All Logs" do not reconcile the two stores).
 
 ### Navigation & layers
 - `MainTabView` → Home / Activity / Settings tabs.
@@ -55,11 +55,11 @@ This project is a child of `../template/template.ios` (Fast Five Products LLC's 
 - When copying a template file, keep its structured file header and update the "Modified by" line (see below).
 
 ### File headers & licensing
-Headers are currently **inconsistent** across this repo — some files carry the full FFP AGPL template header (e.g. `Store/SettingsStore.swift`, `Model/ActivityLogEntry.swift`, `Utilities/DebugPrintable.swift`), while others still have the original minimal "Created by Elizabeth Maiser" header and the old `ibankerInterfaceDesign` project name. Standardizing these is part of the rewrite.
+All Swift files carry the FFP AGPL header (standardized for v2.0.0). The project is licensed AGPL-3.0 with the Fast Five Products LLC author exception — see `LICENSE` and `LICENSE-EXCEPTIONS.md` (both bundled as app Resources).
 
-For files adopted from or aligned with the template, use the FFP AGPL header format documented in `../template/template.ios/CONTRIBUTING.md`:
-- **Modifying** an existing FFP-headered file: add a `Modified by <name>, <date>` line and bump the template version with an "(updated)" suffix.
-- **Creating** a new file aligned with the template: start with the current template version header.
+Use the FFP AGPL header format documented in `../template/template.ios/CONTRIBUTING.md`:
+- **Modifying** an existing file: maintain a single `Modified by <name>, <date>` line (replace it — never stack a second) and add an "(updated)" suffix to the template version line; never advance the template version number itself.
+- **Creating** a new file: start with the current template version header, preserving the layout used across this repo's headers.
 
 ### App-Specific MARK convention
 Template "merge" files mark customizable regions with `// MARK: - App-Specific`. Content above the MARK can generally be refreshed from the template; content at/below is app-specific and must be preserved or carefully merged. Treat the MARK as a hint, and always review the full diff.
@@ -109,7 +109,7 @@ iBanker follows the FFP template's git-flow model:
 - **`main`** — the release/production branch: a clean linear history with one commit per release (`Release vX.Y.Z`). Cut a release by squashing all of `develop` since the last release onto `main`.
 - **`objective-c`** — a frozen snapshot of the final Objective-C release (v1.3.0), kept for reference; not a working branch.
 
-The SwiftUI rewrite (issue #11, targeting v1.4.0) lives on `develop`; it is not yet released, so `main` still points at the last shipped version, v1.3.0.
+The SwiftUI rewrite (issue #11, targeting v2.0.0) lives on `develop`; it is not yet released, so `main` still points at the last shipped version, v1.3.0.
 
 **Feature flow** (off `develop`):
 1. Branch from a GitHub issue: `git checkout develop` → `git pull origin develop` → `gh issue develop <issue-number> --base develop --checkout`.

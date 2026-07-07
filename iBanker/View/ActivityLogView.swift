@@ -2,7 +2,7 @@
 //  ActivityLogView.swift
 //
 //  Template file created by Elizabeth Maiser, Fast Five Products LLC, on 7/5/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/3/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //      Template v0.4.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
@@ -22,7 +22,6 @@ import SwiftUI
 import SwiftData
 
 struct ActivityLogView: View, DebugPrintable {
-    @Environment(\.modelContext) private var modelContext
     @Query(sort: \ActivityLogEntry.timestamp) var logEntries: [ActivityLogEntry]
 
     var showTitle: Bool = false
@@ -96,20 +95,13 @@ struct ActivityLogView: View, DebugPrintable {
             }
 
             Spacer()
-            Button("Clear All Logs") {
-                clearAllLogs()
-            }
+            // iBanker divergence from the template (#28): no "Clear All Logs"
+            // button. The log is the game's audit trail — one unconfirmed tap
+            // could erase it mid-game — and log size is already bounded by the
+            // retention cap (ActivityLogEntry.trimToCap). Upstream removal is
+            // proposed as template.ios#167.
         }
         .padding()
-    }
-
-    private func clearAllLogs() {
-        withAnimation {
-            for entry in logEntries {
-                modelContext.delete(entry)
-            }
-            visibleCount = Self.pageSize
-        }
     }
 }
 

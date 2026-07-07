@@ -107,6 +107,7 @@ struct PlayerView: View {
                             .multilineTextAlignment(.trailing)
                         Button {
                             gameSession.perform(.addMoney(amount: addAmount), by: player.id)
+                            addInput = nil
                         } label: {
                             Image(systemName: "plus.circle.fill")
                                 .font(.title)
@@ -126,6 +127,7 @@ struct PlayerView: View {
                             .multilineTextAlignment(.trailing)
                         Button {
                             gameSession.perform(.subtractMoney(amount: subtractAmount), by: player.id)
+                            subtractInput = nil
                         } label: {
                             Image(systemName: "minus.circle.fill")
                                 .font(.title)
@@ -164,6 +166,7 @@ struct PlayerView: View {
                             Button {
                                 if let selectedPlayer = selectedPlayer {
                                     gameSession.perform(.payPlayer(selectedPlayer.id, amount: sendAmount), by: player.id)
+                                    sendInput = nil
                                 }
                             } label: {
                                 Image(systemName: "arrow.up.circle.fill")

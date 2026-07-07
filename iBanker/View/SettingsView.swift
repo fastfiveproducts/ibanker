@@ -26,7 +26,8 @@ struct SettingsView: View {
     // do not create additional SettingsStore instances in app code.
     @EnvironmentObject private var settings: SettingsStore
     @EnvironmentObject private var gameSession: GameSession
-    @State private var showingAlert = false
+    @State private var showingResetPlayersAlert = false
+    @State private var showingResetSettingsAlert = false
 
     var showTitle: Bool = false
 
@@ -93,28 +94,40 @@ struct SettingsView: View {
                         }
                     }
                 }
+                // Apple-pattern destructive-settings section (#28): a plain
+                // "Reset" header, red buttons, an explanatory footer, and a
+                // confirmation on both actions — mirrors iOS's own
+                // Settings > General > Transfer or Reset iPhone.
                 Section {
-                    Button("Reset Players") {
-                        showingAlert = true
-                    }
-                    .alert(isPresented: $showingAlert) {
-                        // 4. Define the content of the alert.
-                        Alert(
-                            title: Text("Confirm Reset"),
-                            message: Text("Are you sure you want to reset players? Each player's balance and salary will return to default settings."),
-                            primaryButton: .destructive(Text("Reset")) {
-                                resetPlayers()
-                            },
-                            secondaryButton: .cancel(Text("Cancel")) {
-                            }
-                        )
+                    Button("Reset Players", role: .destructive) {
+                        showingResetPlayersAlert = true
                     }
 
-                    Button("Reset All Settings") {
+                    Button("Reset All Settings", role: .destructive) {
+                        showingResetSettingsAlert = true
+                    }
+                } header: {
+                    Text("Reset")
+                } footer: {
+                    Text("Reset Players returns every player to the current Mode's starting balance and salary. Reset All Settings restores iBanker's default settings.")
+                }
+                .alert("Reset Players?", isPresented: $showingResetPlayersAlert) {
+                    Button("Reset", role: .destructive) {
+                        resetPlayers()
+                    }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("Each player's balance and salary will return to the current Mode's defaults.")
+                }
+                .alert("Reset All Settings?", isPresented: $showingResetSettingsAlert) {
+                    Button("Reset", role: .destructive) {
                         withAnimation {
                             settings.resetAllSettings()
                         }
                     }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("iBanker's settings will return to their defaults.")
                 }
 
                 aboutSection

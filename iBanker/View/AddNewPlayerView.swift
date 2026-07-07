@@ -19,7 +19,6 @@
 //
 
 import SwiftUI
-import PhotosUI
 
 struct AddNewPlayerView: View {
     // @Environment(\.dismiss) property to dismiss the sheet.
@@ -34,15 +33,10 @@ struct AddNewPlayerView: View {
     @State private var playerBalance: Double? = nil
     @State private var playerSalary: Int? = nil
 
-    // Player photo capture (#20)
+    // Player photo capture (#20) — flow provided by .playerPhotoPicker
     @State private var playerImageData: Data? = nil
     @State private var showingPhotoDialog = false
-    @State private var showingCameraPicker = false
-    @State private var showingLibraryPicker = false
-    @State private var selectedPhotoItem: PhotosPickerItem? = nil
-    @State private var photoLoadTask: Task<Void, Never>? = nil
     @State private var isLoadingPhoto = false
-    @State private var showingPhotoLoadFailedAlert = false
 
     // A closure to pass the new Player object back to the HomeView.
     var onSave: (Player) -> Void
@@ -151,53 +145,12 @@ struct AddNewPlayerView: View {
                     }
                 }
             }
-            // Photo capture: dialog mirrors v1.3.0's action sheet — camera
-            // (when available) or photo library; library uses PhotosPicker.
-            .confirmationDialog("Player Photo", isPresented: $showingPhotoDialog, titleVisibility: .visible) {
-                if CameraImagePicker.isCameraAvailable {
-                    Button("Take Picture") { showingCameraPicker = true }
-                }
-                Button("Photo Library") { showingLibraryPicker = true }
-                if playerImageData != nil {
-                    Button("Remove Photo", role: .destructive) { playerImageData = nil }
-                }
-                Button("Cancel", role: .cancel) { }
-            }
-            .photosPicker(isPresented: $showingLibraryPicker, selection: $selectedPhotoItem, matching: .images)
-            .onChange(of: selectedPhotoItem) {
-                guard let item = selectedPhotoItem else { return }
-                // Supersede any in-flight load so a re-pick can't be
-                // overwritten by an older, slower load finishing last.
-                photoLoadTask?.cancel()
-                isLoadingPhoto = true
-                photoLoadTask = Task {
-                    let data = try? await item.loadTransferable(type: Data.self)
-                    guard !Task.isCancelled else { return }  // a newer pick owns the state now
-                    if let data,
-                       let uiImage = UIImage(data: data),
-                       let squareData = PlayerImageMaker.squareJPEGData(from: uiImage) {
-                        playerImageData = squareData
-                    } else {
-                        // Async result the user waited on -> alert, not silence
-                        showingPhotoLoadFailedAlert = true
-                    }
-                    isLoadingPhoto = false
-                    selectedPhotoItem = nil
-                }
-            }
-            // Camera capture must be full screen (Apple documents iPad camera
-            // capture as full-screen-only; a page sheet can distort the preview).
-            .fullScreenCover(isPresented: $showingCameraPicker) {
-                CameraImagePicker { uiImage in
-                    playerImageData = PlayerImageMaker.squareJPEGData(from: uiImage)
-                }
-                .ignoresSafeArea()
-            }
-            .alert("Could Not Load Photo", isPresented: $showingPhotoLoadFailedAlert) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text("The selected photo could not be loaded. Please try another photo.")
-            }
+            // Photo capture: the shared flow — v1.3.0-style dialog, camera
+            // (front-facing first) when available, library via PhotosPicker.
+            // See PlayerPhotoPicker.swift.
+            .playerPhotoPicker(isPresented: $showingPhotoDialog,
+                               imageData: $playerImageData,
+                               isLoading: $isLoadingPhoto)
             .onAppear {
                 // Set default values from the shared settings when the view appears (#13)
                 if playerName.isEmpty { // Only set defaults if player name is empty (new player)

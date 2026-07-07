@@ -53,7 +53,17 @@ enum SystemSoundEffect: String {
 final class SoundPlayer: NSObject, AVAudioPlayerDelegate, DebugPrintable {
 
     static let shared = SoundPlayer()
-    private override init() { super.init() }
+
+    private override init() {
+        super.init()
+        // Without an explicit category, iOS defaults to .soloAmbient: the
+        // Ring/Silent switch mutes the app entirely (the simulator has no
+        // switch, which hides this) and playback pauses the user's music.
+        // The in-app Sound Effects toggle is the authority instead: .playback
+        // plays even when the phone is on silent, and .mixWithOthers lets any
+        // background audio keep playing underneath.
+        try? AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
+    }
 
     // Players currently playing (retained so ARC can't kill them mid-sound)
     // and players waiting to start once the active ones finish.

@@ -23,4 +23,4 @@ All other users must comply fully with the AGPL-3.0 license.
 
 ---
 
-For questions about this exception or to inquire about alternative licensing, please contact: [licenses@fastfiveproducts.llc](mailto:licenses@fastfiveproducts.llc)
+For questions about this exception or to inquire about alternative licensing, please contact: [licenses@fastfiveproducts.com](mailto:licenses@fastfiveproducts.com)

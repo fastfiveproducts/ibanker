@@ -15,7 +15,7 @@
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
 //
-//  For licensing inquiries, contact: licenses@fastfiveproducts.llc
+//  For licensing inquiries, contact: licenses@fastfiveproducts.com
 //
 //  SwiftUI reimplementation of v1.3.0's SpinnerViewController ("Spin to
 //  Win", The Game of Life $400K mode): a reel lands on one of four prize

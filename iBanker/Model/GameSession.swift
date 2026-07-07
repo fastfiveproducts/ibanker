@@ -1,8 +1,21 @@
 //
 //  GameSession.swift
-//  ibankerInterfaceDesign
 //
-//  Created by Elizabeth Maiser on 7/23/25.
+//  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/23/25.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//
+//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
+//
+//  Copyright © 2025 Fast Five Products LLC. All rights reserved.
+//
+//  This file is part of a project licensed under the GNU Affero General Public License v3.0.
+//  See the LICENSE file at the root of this repository for full terms.
+//
+//  An exception applies: Fast Five Products LLC retains the right to use this code and
+//  derivative works in proprietary software without being subject to the AGPL terms.
+//  See LICENSE-EXCEPTIONS.md for details.
+//
+//  For licensing inquiries, contact: licenses@fastfiveproducts.llc
 //
 
 
@@ -64,17 +77,57 @@ class GameSession: ObservableObject {
         }
     }
     
-    // Add a transaction
-    func perform(_ action: GameAction, by playerID: String) {
+    // Add a transaction. An optional note is stored on the transaction and,
+    // when present, replaces the generated Activity Log sentence (e.g. the
+    // spinner's "won the spin!" line).
+    func perform(_ action: GameAction, by playerID: String, note: String? = nil) {
+        let balanceBefore = currentState.playerBalances[playerID] ?? 0
         let tx = GameTransaction(
             id: UUID().uuidString,
             timestamp: Date(),
             playerID: playerID,
             action: action,
-            note: nil
+            note: note
         )
         transactions.append(tx)
-        logActivity(for: action, by: playerID, at: tx.timestamp)
+        logActivity(for: action, by: playerID, at: tx.timestamp, note: note)
+        // Actions carrying a custom note are specialized flows (e.g. the
+        // spinner award) whose caller owns the sound — otherwise the win
+        // sound and the generic money sound would overlap.
+        if note == nil {
+            playSound(for: action, by: playerID, balanceBefore: balanceBefore)
+        }
+    }
+
+    // MARK: - Sound Effects
+    // Like the Activity Log, sounds are a derived side effect of perform —
+    // the sound-to-event map matches v1.3.0 (see SoundPlayer.swift).
+    // Reset-players plays its (single) shake sound at the Settings level, not
+    // here, so resetting N players doesn't play N sounds.
+    private func playSound(for action: GameAction, by playerID: String, balanceBefore: Int) {
+        switch action {
+        case .addMoney, .collectSalary:
+            SoundPlayer.shared.play(.cashRegister)
+        case .subtractMoney:
+            SoundPlayer.shared.play(.coinDrop)
+        case .payPlayer:
+            SoundPlayer.shared.play(.happy)
+        case .updateSalary, .resetPlayer, .custom:
+            break
+        }
+
+        // When a money-out action takes the acting player's balance from
+        // non-negative to negative, follow with the sad sound (queued so it
+        // plays after the action's own sound, matching v1.3.0).
+        switch action {
+        case .subtractMoney, .payPlayer:
+            let balanceAfter = currentState.playerBalances[playerID] ?? 0
+            if balanceBefore >= 0 && balanceAfter < 0 {
+                SoundPlayer.shared.playQueued(.sad)
+            }
+        default:
+            break
+        }
     }
 
     // MARK: - Activity Log
@@ -82,9 +135,9 @@ class GameSession: ObservableObject {
     // performed action is also recorded as a human-readable ActivityLogEntry in
     // SwiftData. `perform` stays the single source of truth — the log is never a
     // second source of state.
-    private func logActivity(for action: GameAction, by playerID: String, at timestamp: Date) {
+    private func logActivity(for action: GameAction, by playerID: String, at timestamp: Date, note: String?) {
         guard let modelContext else { return }
-        guard let description = activityDescription(for: action, by: playerID) else { return }
+        guard let description = note ?? activityDescription(for: action, by: playerID) else { return }
         modelContext.insert(ActivityLogEntry(description, timestamp: timestamp))
     }
 

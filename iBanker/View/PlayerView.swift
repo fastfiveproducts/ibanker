@@ -2,7 +2,7 @@
 //  PlayerView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
 //  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -218,6 +218,8 @@ struct PlayerView: View {
     }
 }
 
+
+#if DEBUG
 #Preview("Player #1") {
         // Create the GameSession instance *outside* the ViewBuilder's direct scope.
         // It's a class, so it's a reference type.
@@ -273,3 +275,4 @@ struct PlayerView: View {
                 }
         }
 }
+#endif

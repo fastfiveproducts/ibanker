@@ -2,8 +2,9 @@
 //  SpinnerView.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
-//  Template v0.2.0 — Fast Five Products LLC's public AGPL template.
+//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -182,6 +183,8 @@ struct SpinnerView: View {
     }
 }
 
+
+#if DEBUG
 #Preview {
     let previewGameSession = GameSession()
     let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "car", isLocalOnly: true, salary: 200)
@@ -194,3 +197,4 @@ struct SpinnerView: View {
             previewGameSession.players.append(playerBob)
         }
 }
+#endif

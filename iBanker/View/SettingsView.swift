@@ -1,12 +1,12 @@
 //
 //  SettingsView.swift
 //
-//  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/4/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Template file created by Elizabeth Maiser, Fast Five Products LLC, on 7/4/25.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
-//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
+//  Template v0.3.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
-//  Copyright © 2025 Fast Five Products LLC. All rights reserved.
+//  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
 //  See the LICENSE file at the root of this repository for full terms.
@@ -27,9 +27,13 @@ struct SettingsView: View {
     @EnvironmentObject private var settings: SettingsStore
     @EnvironmentObject private var gameSession: GameSession
     @State private var showingAlert = false
-    
-    var showTitle: Bool = true
-    
+
+    var showTitle: Bool = false
+
+    // MARK: - App-Specific
+    // iBanker's settings are game configuration: sound/spinner preferences,
+    // game-mode defaults (via the shared SettingsStore), and player reset.
+
     var body: some View {
         VStack {
             if showTitle {
@@ -39,6 +43,7 @@ struct SettingsView: View {
                         .fontWeight(.semibold)
                     Spacer()
                 }
+                .padding(.bottom)
             }
             Form {
                 Section ("Preferences"){
@@ -134,10 +139,12 @@ struct SettingsView: View {
 }
 
 
+#if DEBUG
 #Preview {
     let sampleGameSession = GameSession()
     SettingsView(showTitle: true)
         .environmentObject(sampleGameSession)
         .environmentObject(sampleGameSession.settings)
 }
+#endif
 

@@ -2,7 +2,7 @@
 //  AddNewPlayerView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
 //  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -214,6 +214,8 @@ struct AddNewPlayerView: View {
     
 }
 
+
+#if DEBUG
 #Preview {
     // For preview, you still need a GameSession with a SettingsStore
     let sampleSettings = SettingsStore()
@@ -228,3 +230,4 @@ struct AddNewPlayerView: View {
     .environmentObject(sampleGameSession) // Provide the environment object for the preview
     .environmentObject(sampleSettings)
 }
+#endif

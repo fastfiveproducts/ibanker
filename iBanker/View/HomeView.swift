@@ -1,12 +1,14 @@
 //
 //  HomeView.swift
 //
-//  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Template created by Pete Maiser, July 2024 through May 2025
+//  Split from MenuView ~restored by Pete Maiser, Fast Five Products LLC, on 10/23/25.
+//  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
-//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
+//  Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
-//  Copyright © 2025 Fast Five Products LLC. All rights reserved.
+//  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
 //  See the LICENSE file at the root of this repository for full terms.
@@ -21,42 +23,22 @@
 import SwiftUI
 
 struct HomeView: View {
-    // @State property to hold our list of players.
-    // @State ensures that the UI updates when this array changes.
     @EnvironmentObject var gameSession: GameSession // Access the shared game session
-    @EnvironmentObject private var settings: SettingsStore // For the spinner toolbar affordance (#21)
-    @State private var showingAddPlayerSheet = false
-    @State private var showingSpinnerSheet = false
+
+    // The add-player sheet and tab selection are owned by MainTabView (with
+    // its toolbar entry points); these bindings let the empty state's inline
+    // buttons present the sheet and switch tabs.
+    @Binding var showingAddPlayerSheet: Bool
+    @Binding var selectedTab: Tab
+
+    // MARK: - App-Specific
+    // Child projects typically replace the entire body with their own
+    // home screen composition. iBanker's home screen is the player roster;
+    // the enclosing NavigationStack, navigation title, and toolbar are
+    // provided by MainTabView (template pattern).
 
     var body: some View {
-        // NavigationStack provides the navigation bar and allows for navigation links.
-        // (Was the deprecated NavigationView, whose accidental two-column split on
-        // iPad caused the add-player bugs #12/#13.)
-        NavigationStack {
-            contentView
-                .navigationTitle("Players") // Title for the navigation bar
-                .toolbar {
-                    toolbarContent
-                }
-        }
-
-        // The .sheet modifier presents a new view modally when showingAddPlayerSheet is true.
-        .sheet(isPresented: $showingAddPlayerSheet) {
-            // When the sheet is dismissed, this closure receives the new player.
-            AddNewPlayerView { newPlayer in
-                gameSession.players.append(newPlayer) // Add the new player to the list
-            }
-        }
-
-        // Spin to Win (#21) — reachable via the toolbar when enabled
-        .sheet(isPresented: $showingSpinnerSheet) {
-            SpinnerView()
-        }
-        
-        .onAppear {
-            
-        }
-         
+        contentView
     }
     
     /// Determines whether to show the empty state or the list of players.
@@ -83,12 +65,23 @@ struct HomeView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
 
-            NavigationLink(destination: SettingsView()) {
+            // Tagline carried forward from the original Objective-C app's
+            // first-launch screen
+            Text("iBanker takes the place of paper money in board games!")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
+            Button(action: {
+                selectedTab = .settings
+            }) {
                 Text("Select your game mode in the settings tab!")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
             }
+            .buttonStyle(.plain)
             .padding(.horizontal)
 
             Divider()
@@ -106,12 +99,15 @@ struct HomeView: View {
 
             Divider()
 
-            NavigationLink(destination: ActivityLogView()) {
+            Button(action: {
+                selectedTab = .activityLog
+            }) {
                 Text("Throughout the game, check the Activity Log to review actions!")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
             }
+            .buttonStyle(.plain)
             .padding(.horizontal)
 
             Spacer()
@@ -164,42 +160,6 @@ struct HomeView: View {
         .background(Color(.systemGroupedBackground))
     }
     
-    /// The content for the toolbar.
-    @ToolbarContentBuilder
-    private var toolbarContent: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            if !gameSession.players.isEmpty {
-                EditButton()
-            } else {
-                // Optionally, add a different leading item for the empty state
-                // Text("Setup") // Example
-            }
-        }
-
-        ToolbarItem(placement: .topBarTrailing) {
-            // Spin-to-Win entry point, shown only when the spinner is
-            // enabled (auto-on for the $400K mode) — mirrors the v1.3.0
-            // conditional toolbar button.
-            if settings.enabledSpinner {
-                Button(action: {
-                    showingSpinnerSheet = true
-                }) {
-                    Image(systemName: "arrow.triangle.2.circlepath")
-                        .accessibilityLabel("Spin to Win")
-                }
-            }
-        }
-
-        ToolbarItem(placement: .topBarTrailing) {
-            Button(action: {
-                showingAddPlayerSheet = true
-            }) {
-                Image(systemName: "plus")
-                    .accessibilityLabel("Add New Player")
-            }
-        }
-    }
-    
     // MARK: - Helper Functions
     // Function to add a new placeholder player.
     
@@ -214,9 +174,17 @@ struct HomeView: View {
     }
 }
 
+
+#if DEBUG
 #Preview {
     let sampleGameSession = GameSession()
-    HomeView()
-        .environmentObject(sampleGameSession)
-        .environmentObject(sampleGameSession.settings)
+    // HomeView no longer owns a NavigationStack (MainTabView provides it),
+    // so the preview supplies one for the navigation links.
+    NavigationStack {
+        HomeView(showingAddPlayerSheet: .constant(false),
+                 selectedTab: .constant(.home))
+    }
+    .environmentObject(sampleGameSession)
+    .environmentObject(sampleGameSession.settings)
 }
+#endif

@@ -32,26 +32,29 @@ Player **balances and salaries are never stored directly**. `gameSession.current
 
 ### Persistence
 - `GameSession` JSON-encodes `players` and `transactions` into `@AppStorage` (UserDefaults keys `gamePlayers` / `gameTransactions`). It is saved on the root view's `onDisappear` and decoded in `GameSession.init()` (direct `UserDefaults` access, to satisfy two-phase init).
-- `SettingsStore` persists individual settings via `@AppStorage` (`selectedGameMode`, `customInitialBalance`, `customInitialSalary`, `soundEffects`).
+- `SettingsStore` persists individual settings via `@AppStorage` (`selectedGameMode`, `customInitialBalance`, `customInitialSalary`, `soundEffects`, `enabledSpinner`).
 - `GameMode` defines preset starting balances/salaries per popular game; `SettingsStore.effectiveDefaultBalance/Salary` resolve the active mode (or custom values).
 
 ### Activity Log — a derived SwiftData store
 `ActivityLogView` reads `ActivityLogEntry` (a SwiftData `@Model`) via `@Query`, using `@Environment(\.modelContext)`. The log is **fed by the transaction log as a derived side effect**: every `gameSession.perform(...)` also inserts a human-readable `ActivityLogEntry` (the container is attached in `iBankerApp`; the context is handed to `GameSession` in `MainTabView`). The transaction log remains the single source of truth — the Activity Log is presentation history, never a second source of state (note: `undoLastTransaction()`/"Clear All Logs" do not reconcile the two stores).
 
+Both files are template v0.4.0 adoptions: entries are **retention-capped** (`ActivityLogEntry.trimToCap`, run from `MainTabView`'s launch `.task`, cap 1000 with a trim-marker entry), and the view is **windowed** (newest 200 with "Show Earlier" paging, bottom-anchored scrolling).
+
 ### Navigation & layers
-- `MainTabView` → Home / Activity / Settings tabs.
-- `HomeView` lists/edits players (add, delete, reorder) and shows live balances.
+- `MainTabView` (template-skeleton merge file) owns the `NavigationStack`, the Home / Activity / Settings tabs, the brand navigation title, the `mainToolbar` extension (Edit / Spin-to-Win / Add Player, gated on the Home tab), and the add-player/spinner sheets. Per-tab `navigationTitle`/`toolbar` preferences do NOT propagate through a `TabView` to the enclosing stack — put per-tab bar items in `mainToolbar`, not in tab content.
+- `HomeView` (merge-pattern body) is the player roster: lists/edits players (delete, reorder) and shows live balances; presents `PlayerView` pushes.
 - `PlayerView` is the per-player banking screen (collect salary, add/subtract, send to another player).
-- `ViewSupport/` holds presentation config: `AppColor` (palette), `ViewConfiguration` (`dynamicSizeMax`, `isPreview`), `CustomLabeledContentStyle`.
-- `Utilities/DebugPrintable` — protocol giving `debugprint(_:)` that is a no-op in release builds.
+- `ViewSupport/` holds presentation config aligned with the template: `AppConfig` (merge file — brand, `dynamicSizeMax`, colors), `CustomLabeledContentStyle`, `ErrorAlertViewModifier`, plus app-owned `PlayerThumbnailView`/`CameraImagePicker`.
+- `Utilities/` — template `DebugLogging` (the `DebugPrintable` protocol's `debugprint(_:)`, release no-op, plus `deviceLog`), template `PreviewConfig` (`isPreview`), and app-owned `SoundPlayer`/`PlayerImageMaker`.
 
 
 ## Template Relationship
 
-This project is a child of `../template/template.ios` (Fast Five Products LLC's public AGPL template, currently around v0.3.x — see that repo's `TEMPLATE.md`). **Prefer taking files from the template wholesale** when adopting functionality, rather than reinventing it.
+This project is a child of `../template/template.ios` (Fast Five Products LLC's public AGPL template; iBanker last aligned at **v0.4.3** — check that repo's `TEMPLATE.md` for the current version). **Prefer taking files from the template wholesale** when adopting functionality, rather than reinventing it.
 
-- Template source of truth: `../template/template.ios/` — read its `AGENTS.md`, `CONTRIBUTING.md`, and `README.md` for the full conventions.
-- The template is a Firebase/Data Connect app; **iBanker does not (yet) use Firebase**, so the template's Cloud/Repository/Store layers are not present here. Pull in template files selectively.
+- Template source of truth: `../template/template.ios/` — read its `AGENTS.md`, `CONTRIBUTING.md`, and `README.md` for the full conventions, and its `CHANGELOG.md` (child-app impact per release) when upgrading.
+- The template is a Firebase/Data Connect app; **iBanker does not (yet) use Firebase**, so the template's Cloud/CloudSupport/Repositories/ViewModels layers and account/posts/contact views are deliberately not present here. Pull in template files selectively; `../template/template.ios/tools/template-compare.sh iBanker/` (run from this repo's root — the script lives in the template repo and self-resolves its template dir) categorizes files (wholesale/merge/new/app-only).
+- **Accepted divergences from the template** (recorded, not drift): folder naming (`Model/`, `ModelSupport/`, `View/`, `Store/` vs the template's `Models/`, `Views/Main|System/`, `Repositories/` — the compare script maps them via basename fallback); the app entry point (`iBankerApp` launches straight to `MainTabView` — no Firebase configure, LaunchView choreography, or overlay stack); a local `Tab` enum in `MainTabView` standing in for the template's `NavigationItem` (feature-flag driven) until cloud features are adopted.
 - When copying a template file, keep its structured file header and update the "Modified by" line (see below).
 
 ### File headers & licensing

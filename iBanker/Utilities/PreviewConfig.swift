@@ -1,11 +1,10 @@
 //
-//  ViewConfiguration.swift
+//  PreviewConfig.swift
 //
-//  Created by Elizabeth Maiser, Fast Five Products LLC, on 8/16/25.
+//  Created by Claude, Fast Five Products LLC, on 3/2/26.
+//      Template v0.3.5 — Fast Five Products LLC's public AGPL template.
 //
-//  Template v0.2.0 — Fast Five Products LLC's public AGPL template.
-//
-//  Copyright © 2025 Fast Five Products LLC. All rights reserved.
+//  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
 //  See the LICENSE file at the root of this repository for full terms.
@@ -17,17 +16,8 @@
 //  For licensing inquiries, contact: licenses@fastfiveproducts.llc
 //
 
-import SwiftUI
 
-// The "ViewConfiguration" struct contains smallish settings, config, and ref data
-// specific to SwiftUI and this application that are generally hard-coded
-// here or inferred quickly upon app startup
-struct ViewConfiguration {
-    
-    static let dynamicSizeMax = DynamicTypeSize.xxxLarge
-    
-}
-
+import Foundation
 
 #if DEBUG
 var isPreview: Bool { return ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" }

@@ -15,7 +15,7 @@
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
 //
-//  For licensing inquiries, contact: licenses@fastfiveproducts.llc
+//  For licensing inquiries, contact: licenses@fastfiveproducts.com
 //
 
 
@@ -40,10 +40,10 @@ struct AppConfig {
     static let brandName = "iBanker"
 
     static let privacyText = "Privacy Policy"
-    static let privacyURL = URL(string: "https://www.fastfiveproducts.llc/")!
+    static let privacyURL = URL(string: "https://ibanker.fastfiveproducts.com/privacy")!
 
     static let supportText = "\(brandName) Support"
-    static let supportURL = URL(string: "https://www.fastfiveproducts.llc/")!
+    static let supportURL = URL(string: "https://ibanker.fastfiveproducts.com/")!
 
     // Fixed Colors
     // brandColor is iBanker's classic dark green. The rest of the pre-upgrade

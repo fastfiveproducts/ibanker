@@ -15,7 +15,7 @@
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
 //
-//  For licensing inquiries, contact: licenses@fastfiveproducts.llc
+//  For licensing inquiries, contact: licenses@fastfiveproducts.com
 //
 
 
@@ -109,20 +109,21 @@ struct SettingsView: View {
                             }
                         )
                     }
+
+                    Button("Reset All Settings") {
+                        withAnimation {
+                            settings.resetAllSettings()
+                        }
+                    }
                 }
+
+                aboutSection
             }
             .onChange(of: settings.selectedGameMode) {
                 // Changing the mode resets the spinner to the mode's default
                 // (v1.3.0 behavior); the Preferences Toggle remains a manual
                 // override.
                 settings.enabledSpinner = settings.selectedGameMode.defaultSpinnerOn
-            }
-
-            Spacer()
-            Button("Reset All Settings") {
-                withAnimation {
-                    settings.resetAllSettings()
-                }
             }
         }
         .padding()
@@ -135,6 +136,50 @@ struct SettingsView: View {
         }
         // One shake for the whole reset (not per player), matching v1.3.0
         SoundPlayer.shared.playSystemSound(.shake)
+    }
+
+    /// About footer (pattern adopted from DTrol's SettingsView): the app's
+    /// logo, brand name, version, support and privacy links, and copyright.
+    private var aboutSection: some View {
+        Section {
+            VStack(spacing: 6) {
+                Image("iBankerLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 64, height: 64)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .accessibilityHidden(true)
+                Text(AppConfig.brandName)
+                    .font(.headline)
+                Text("Version \(Self.appVersion)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Link(AppConfig.supportText, destination: AppConfig.supportURL)
+                    .font(.caption)
+                Link(AppConfig.privacyText, destination: AppConfig.privacyURL)
+                    .font(.caption)
+                Text("© 2015–2026 Fast Five Products LLC")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 8)
+            .listRowBackground(Color.clear)
+            // Two links share this row: without .borderless a Form row forwards
+            // a tap ANYWHERE in the row to its first control, so taps on the
+            // logo — or on Privacy Policy — would all open the support URL
+            // (lesson learned in DTrol). Borderless gives each link its own
+            // discrete hit area.
+            .buttonStyle(.borderless)
+        }
+    }
+
+    /// "2.0 (1)" — marketing version and build, from the bundle.
+    private static var appVersion: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "—"
+        let build = info?["CFBundleVersion"] as? String ?? "—"
+        return "\(version) (\(build))"
     }
 }
 

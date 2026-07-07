@@ -17,7 +17,7 @@
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
 //
-//  For licensing inquiries, contact: licenses@fastfiveproducts.llc
+//  For licensing inquiries, contact: licenses@fastfiveproducts.com
 //
 
 import SwiftUI

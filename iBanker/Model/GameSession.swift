@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
 
 class GameSession: ObservableObject {
     @AppStorage("gamePlayers") private var playersData: Data = Data()
@@ -22,7 +23,12 @@ class GameSession: ObservableObject {
     // If you plan to have multiple GameSessions (e.g., different saved games),
     // you might want to pass SettingsStore as an initializer parameter.
     var settings: SettingsStore = SettingsStore() // Create or get your shared settings instance
-    
+
+    // SwiftData context for the Activity Log, injected from the view layer (see
+    // MainTabView). Optional because GameSession is created before the SwiftData
+    // container exists in the environment.
+    var modelContext: ModelContext?
+
     var currentState: GameState {
         GameStateReducer.reduce(players: players, transactions: transactions)
     }
@@ -68,6 +74,45 @@ class GameSession: ObservableObject {
             note: nil
         )
         transactions.append(tx)
+        logActivity(for: action, by: playerID, at: tx.timestamp)
+    }
+
+    // MARK: - Activity Log
+    // The Activity Log is a derived side effect of the transaction log: each
+    // performed action is also recorded as a human-readable ActivityLogEntry in
+    // SwiftData. `perform` stays the single source of truth — the log is never a
+    // second source of state.
+    private func logActivity(for action: GameAction, by playerID: String, at timestamp: Date) {
+        guard let modelContext else { return }
+        guard let description = activityDescription(for: action, by: playerID) else { return }
+        modelContext.insert(ActivityLogEntry(description, timestamp: timestamp))
+    }
+
+    private func playerName(for id: String) -> String {
+        players.first(where: { $0.id == id })?.name ?? "A player"
+    }
+
+    // Returns a human-readable sentence for the action, or nil to skip logging.
+    // `updateSalary` is intentionally not logged: the salary field syncs on every
+    // keystroke, which would flood the log.
+    private func activityDescription(for action: GameAction, by playerID: String) -> String? {
+        let name = playerName(for: playerID)
+        switch action {
+        case .collectSalary(let amount):
+            return "\(name) collected $\(amount) salary."
+        case .payPlayer(let recipientID, let amount):
+            return "\(name) sent $\(amount) to \(playerName(for: recipientID))."
+        case .addMoney(let amount):
+            return "\(name) added $\(amount)."
+        case .subtractMoney(let amount):
+            return "\(name) subtracted $\(amount)."
+        case .resetPlayer(let balance, let salary):
+            return "\(name) was reset to $\(balance) and $\(salary) salary."
+        case .updateSalary:
+            return nil
+        case .custom(let description):
+            return description
+        }
     }
     
     /// Example of how you might implement undo (simplistic, real undo is more complex)

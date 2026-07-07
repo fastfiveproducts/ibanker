@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct iBankerApp: App {
@@ -21,5 +22,8 @@ struct iBankerApp: App {
                     gameSession.saveGame()
                 }
         }
+        // Provide the SwiftData container for the Activity Log. Without this the
+        // Activity tab's @Query has no container and crashes at runtime.
+        .modelContainer(for: ActivityLogEntry.self)
     }
 }

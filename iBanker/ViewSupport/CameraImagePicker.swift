@@ -2,8 +2,9 @@
 //  CameraImagePicker.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
-//  Template v0.2.0 — Fast Five Products LLC's public AGPL template.
+//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -22,7 +23,7 @@ import UIKit
 
 /// Minimal camera capture for SwiftUI (which has no native camera picker):
 /// wraps UIImagePickerController with sourceType = .camera. Library
-/// selection uses SwiftUI's PhotosPicker instead — see AddNewPlayerView.
+/// selection uses SwiftUI's PhotosPicker instead — see PlayerPhotoPicker.
 struct CameraImagePicker: UIViewControllerRepresentable {
     @Environment(\.dismiss) private var dismiss
     let onImagePicked: (UIImage) -> Void
@@ -35,6 +36,11 @@ struct CameraImagePicker: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.sourceType = .camera
+        // Player photos are usually selfies — open on the front camera when
+        // the device has one (the user can still flip to the rear camera).
+        if UIImagePickerController.isCameraDeviceAvailable(.front) {
+            picker.cameraDevice = .front
+        }
         picker.delegate = context.coordinator
         return picker
     }

@@ -32,6 +32,24 @@ struct PlayerView: View {
     @State private var sendInput: Int? = nil
     @State private var selectedPlayer: Player? = nil
 
+    // Change/add/remove the player's photo (#20 follow-up; v1.3.0 allowed
+    // this from the detail screen). `player` is a by-value copy, so the
+    // photo binding reads and writes the live player in gameSession.players
+    // — the single source of truth for player identity.
+    @State private var showingPhotoDialog = false
+    @State private var isLoadingPhoto = false
+
+    private var photoBinding: Binding<Data?> {
+        Binding(
+            get: { gameSession.players.first(where: { $0.id == player.id })?.imageData },
+            set: { newValue in
+                if let idx = gameSession.players.firstIndex(where: { $0.id == player.id }) {
+                    gameSession.players[idx].imageData = newValue
+                }
+            }
+        )
+    }
+
     private var salaryAmount: Int {
         Int(salaryInput ?? 0)    }
     private var addAmount: Int {
@@ -53,8 +71,27 @@ struct PlayerView: View {
     
     var body: some View {
         VStack {
-            PlayerThumbnailView(imageData: player.imageData, size: 60)
-                .padding(.top, 5)
+            // Tappable photo: opens the shared change/add/remove flow. The
+            // small camera badge signals editability.
+            Button {
+                showingPhotoDialog = true
+            } label: {
+                if isLoadingPhoto {
+                    ProgressView()
+                        .frame(width: 60, height: 60)
+                } else {
+                    PlayerThumbnailView(imageData: photoBinding.wrappedValue, size: 60)
+                        .overlay(alignment: .bottomTrailing) {
+                            Image(systemName: "camera.circle.fill")
+                                .font(.system(size: 16))
+                                .foregroundStyle(.white, Color.accentColor)
+                                .offset(x: 4, y: 4)
+                        }
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Change player photo")
+            .padding(.top, 5)
 
             Text(player.name)
                 .font(.largeTitle)
@@ -203,6 +240,10 @@ struct PlayerView: View {
         .navigationTitle("Player #\(playerIndex)") // Sets the title of the detail view's navigation bar
         .navigationBarTitleDisplayMode(.inline) // Makes the title smaller and centered
         .background(Color(.systemGroupedBackground))
+        // Shared photo change/add/remove flow (see PlayerPhotoPicker.swift)
+        .playerPhotoPicker(isPresented: $showingPhotoDialog,
+                           imageData: photoBinding,
+                           isLoading: $isLoadingPhoto)
         .onAppear {
             // When the view loads, set the TextField's text to the stored salary.
             let currentSalary = gameSession.currentState.playerSalaries[player.id] ?? 200

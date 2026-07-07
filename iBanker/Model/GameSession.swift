@@ -81,6 +81,18 @@ class GameSession: ObservableObject {
     // when present, replaces the generated Activity Log sentence (e.g. the
     // spinner's "won the spin!" line).
     func perform(_ action: GameAction, by playerID: String, note: String? = nil) {
+        // Money-movement actions with no dollars do nothing — no transaction,
+        // no Activity Log entry, no sound. (Tapping Add/Subtract/Send — or
+        // Collect Salary in a $0-salary mode — with an empty or $0 amount was
+        // creating noisy zero-dollar transactions.)
+        switch action {
+        case .addMoney(let amount), .subtractMoney(let amount),
+             .collectSalary(let amount), .payPlayer(_, let amount):
+            guard amount > 0 else { return }
+        case .updateSalary, .resetPlayer, .custom:
+            break
+        }
+
         let balanceBefore = currentState.playerBalances[playerID] ?? 0
         let tx = GameTransaction(
             id: UUID().uuidString,

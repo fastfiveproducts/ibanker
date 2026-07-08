@@ -37,16 +37,13 @@ final class ActivityLogEntry {
 extension ActivityLogEntry {
     static let retentionCap = 1000
 
-    // Trim the log to the retention cap, deleting the oldest entries and inserting
-    // a marker entry noting the trim. The marker uses the newest DELETED entry's
-    // timestamp so it sorts at the trim point (top of the surviving log) in this
-    // timestamp-sorted model — adapts DTrol's append-at-end marker (LogStore.save())
-    // to a sorted @Query. The marker counts toward the cap: one extra entry is
-    // deleted so the post-marker total equals the cap exactly, and no further trim
-    // runs until real growth pushes the count over the cap again (that next trim
-    // deletes the prior marker along with the oldest real entries). Failure
-    // handling is deliberately soft (try? + guard): log maintenance must never
-    // crash launch; a skipped trim self-heals on the next load.
+    // Trim to the retention cap: delete the oldest entries and insert a marker.
+    // The marker takes the newest DELETED entry's timestamp so it sorts at the trim
+    // point (top) in this timestamp-sorted @Query. It counts toward the cap — one
+    // extra entry is deleted so the total lands exactly at the cap, and no further
+    // trim runs until real growth exceeds the cap again (that trim clears the prior
+    // marker too). Failure handling is soft (try? + guard): log maintenance must
+    // never crash launch; a skipped trim self-heals on the next load.
     @MainActor
     static func trimToCap(in context: ModelContext, cap: Int = retentionCap) {
         guard let count = try? context.fetchCount(FetchDescriptor<ActivityLogEntry>()), count > cap else { return }

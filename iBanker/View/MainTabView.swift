@@ -4,7 +4,7 @@
 //  Template created by Pete Maiser, July 2024 through May 2025
 //  Renamed from HomeView by Pete Maiser, Fast Five Products LLC, on 10/23/25.
 //  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
 //      Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
@@ -50,7 +50,7 @@ struct MainTabView: View {
         NavigationStack {
             TabView(selection: $selectedTabItem) {
                 HomeView(showingAddPlayerSheet: $showingAddPlayerSheet,
-                         selectedTab: $selectedTabItem)
+                         editMode: $editMode)
                     .tabItem { Label("Players", systemImage: "person.3.fill") }
                     .tag(Tab.home)
 
@@ -62,13 +62,17 @@ struct MainTabView: View {
                     .tabItem { Label("Settings", systemImage: "gear.circle.fill") }
                     .tag(Tab.settings)
             }
-            // Edit mode is owned here and injected down (environment values
-            // propagate reliably INTO TabView children; it's the upward
-            // toolbar/title preferences that don't cross the boundary), so
-            // the Edit button below deterministically drives HomeView's List.
-            .environment(\.editMode, $editMode)
+            // editMode is owned here (Edit/Done button in mainToolbar) but
+            // injected at the List level in HomeView — TabView-level injection
+            // doesn't activate a tab-hosted List (#30). Reset it on tab switch.
             .onChange(of: selectedTabItem) {
                 editMode = .inactive
+            }
+            // Also exit Edit mode when the roster empties — the Edit button is
+            // hidden with no players, so otherwise a re-added player would render
+            // in a stuck Edit mode (#30).
+            .onChange(of: gameSession.players.isEmpty) {
+                if gameSession.players.isEmpty { editMode = .inactive }
             }
             .navigationTitle(AppConfig.brandName)
             .navigationBarTitleDisplayMode(.inline)

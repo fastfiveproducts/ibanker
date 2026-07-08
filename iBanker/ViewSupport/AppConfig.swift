@@ -21,8 +21,8 @@
 
 import SwiftUI
 
-// The "AppConfig" ("App Configuration") struct contains branding,
-// settings, config, and reference data specific to this implementation
+// AppConfig: branding, settings, config, and reference data specific to
+// this implementation.
 
 struct AppConfig {
     static let dynamicSizeMax = DynamicTypeSize.xxxLarge
@@ -31,11 +31,10 @@ struct AppConfig {
     // Child projects customize: brand name, URLs, colors, feature flags,
     // appClientKey, bundledFeatureFlags, and timing values below.
     //
-    // iBanker is local-only (no Firebase) and launches without the template's
-    // splash/overlay choreography, so the template's launch-timing, feature
-    // flag, multi-tenancy, video-background, and post-display entries are
-    // omitted here — re-add them from the template when adopting those
-    // features (see AGENTS.md, Template Relationship).
+    // iBanker is local-only (no Firebase) and skips the template's splash/overlay
+    // choreography, so its launch-timing, feature-flag, multi-tenancy,
+    // video-background, and post-display entries are omitted — re-add them from
+    // the template when adopting those features (see AGENTS.md, Template Relationship).
 
     static let brandName = "iBanker"
 
@@ -47,7 +46,7 @@ struct AppConfig {
 
     // Fixed Colors
     // brandColor is iBanker's classic dark green. The rest of the pre-upgrade
-    // AppColor palette is preserved here for future branding:
+    // AppColor palette, kept for future branding:
     //   darkGreen  121/153/78    lightGreen 183/231/118
     //   offWhite   242/242/228   darkGray    41/41/38
     //   lightGray   97/97/84     red        231/118/127

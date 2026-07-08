@@ -28,6 +28,7 @@ struct SettingsView: View {
     @EnvironmentObject private var gameSession: GameSession
     @State private var showingResetPlayersAlert = false
     @State private var showingResetSettingsAlert = false
+    @State private var showingDeleteAllPlayersAlert = false
 
     var showTitle: Bool = false
 
@@ -51,75 +52,31 @@ struct SettingsView: View {
                     Toggle("Sound effects", isOn: $settings.soundEffects)
                     Toggle("Spin-to-Win Spinner", isOn: $settings.enabledSpinner)
                 }
-                // MARK: - Game Mode Settings
-                Section("Game Mode Defaults") {
-                    Picker("Game Mode", selection: $settings.selectedGameMode) {
-                        ForEach(GameMode.allCases) { mode in
-                            Text(mode.rawValue).tag(mode)
-                        }
+                // Shared with the empty-state "Game Mode" sheet (#31); the
+                // mode → spinner reset lives inside GameModeSection.
+                GameModeSection()
+                // Destructive-settings section (#28, extended #30), mirroring
+                // iOS Settings > General > Reset: red buttons, each confirmed,
+                // ordered least- to most-destructive. No footer — the confirm
+                // alerts carry the explanation.
+                Section {
+                    Button("Reset Settings", role: .destructive) {
+                        showingResetSettingsAlert = true
                     }
 
-                    // Show custom input fields only if "Custom" mode is selected
-                    if settings.selectedGameMode == .custom {
-                        HStack {
-                            Text("Default Balance")
-                            Spacer()
-                            TextField("Custom Initial Balance", value: $settings.customInitialBalance, formatter: NumberFormatter())
-                                .keyboardType(.numberPad)
-                                .autocorrectionDisabled()
-                                .multilineTextAlignment(.trailing)
-                        }
-                        
-                        HStack {
-                            Text("Default Salary")
-                            Spacer()
-                            TextField("Custom Initial Salary", value: $settings.customInitialSalary, formatter: NumberFormatter())
-                                .keyboardType(.numberPad)
-                                .autocorrectionDisabled()
-                                .multilineTextAlignment(.trailing)
-                        }
-                    } else {
-                        // Display the default values for the selected non-custom mode
-                        HStack {
-                            Text("Default Balance")
-                            Spacer()
-                            Text("$\(settings.effectiveDefaultBalance)")
-                                .foregroundColor(.secondary)
-                        }
-                        HStack {
-                            Text("Default Salary")
-                            Spacer()
-                            Text("$\(settings.effectiveDefaultSalary)")
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-                // Apple-pattern destructive-settings section (#28): a plain
-                // "Reset" header, red buttons, an explanatory footer, and a
-                // confirmation on both actions — mirrors iOS's own
-                // Settings > General > Transfer or Reset iPhone.
-                Section {
                     Button("Reset Players", role: .destructive) {
                         showingResetPlayersAlert = true
                     }
+                    .disabled(gameSession.players.isEmpty)
 
-                    Button("Reset All Settings", role: .destructive) {
-                        showingResetSettingsAlert = true
+                    Button("Delete All Players", role: .destructive) {
+                        showingDeleteAllPlayersAlert = true
                     }
+                    .disabled(gameSession.players.isEmpty)
                 } header: {
                     Text("Reset")
-                } footer: {
-                    Text("Reset Players returns every player to the current Mode's starting balance and salary. Reset All Settings restores iBanker's default settings.")
                 }
-                .alert("Reset Players?", isPresented: $showingResetPlayersAlert) {
-                    Button("Reset", role: .destructive) {
-                        resetPlayers()
-                    }
-                    Button("Cancel", role: .cancel) { }
-                } message: {
-                    Text("Each player's balance and salary will return to the current Mode's defaults.")
-                }
-                .alert("Reset All Settings?", isPresented: $showingResetSettingsAlert) {
+                .alert("Reset Settings?", isPresented: $showingResetSettingsAlert) {
                     Button("Reset", role: .destructive) {
                         withAnimation {
                             settings.resetAllSettings()
@@ -129,14 +86,26 @@ struct SettingsView: View {
                 } message: {
                     Text("iBanker's settings will return to their defaults.")
                 }
+                .alert("Reset Players?", isPresented: $showingResetPlayersAlert) {
+                    Button("Reset", role: .destructive) {
+                        resetPlayers()
+                    }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("Each player's balance and salary will return to the current Mode's defaults.")
+                }
+                .alert("Delete All Players?", isPresented: $showingDeleteAllPlayersAlert) {
+                    Button("Delete All", role: .destructive) {
+                        withAnimation {
+                            gameSession.deleteAllPlayers()
+                        }
+                    }
+                    Button("Cancel", role: .cancel) { }
+                } message: {
+                    Text("Every player will be removed and the game reset. The Activity Log is kept. This can't be undone.")
+                }
 
                 aboutSection
-            }
-            .onChange(of: settings.selectedGameMode) {
-                // Changing the mode resets the spinner to the mode's default
-                // (v1.3.0 behavior); the Preferences Toggle remains a manual
-                // override.
-                settings.enabledSpinner = settings.selectedGameMode.defaultSpinnerOn
             }
         }
         .padding()
@@ -144,9 +113,7 @@ struct SettingsView: View {
     }
     
     private func resetPlayers() {
-        for player in gameSession.players{
-            gameSession.perform(.resetPlayer(balance: settings.effectiveDefaultBalance, salary: settings.effectiveDefaultSalary), by: player.id)
-        }
+        gameSession.resetPlayers(balance: settings.effectiveDefaultBalance, salary: settings.effectiveDefaultSalary)
         // One shake for the whole reset (not per player), matching v1.3.0
         SoundPlayer.shared.playSystemSound(.shake)
     }

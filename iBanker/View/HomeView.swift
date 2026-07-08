@@ -23,13 +23,23 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var gameSession: GameSession // Access the shared game session
+    @EnvironmentObject var gameSession: GameSession
 
-    // The add-player sheet and tab selection are owned by MainTabView (with
-    // its toolbar entry points); these bindings let the empty state's inline
-    // buttons present the sheet and switch tabs.
+    // Owned by MainTabView's toolbar; this binding lets the empty state present it too.
     @Binding var showingAddPlayerSheet: Bool
-    @Binding var selectedTab: Tab
+
+    // Owned by MainTabView's toolbar; attached at the List level here — the only
+    // place it reliably activates a tab-hosted List (#30).
+    @Binding var editMode: EditMode
+
+    // Delete goes through a confirmation. Capture players (not offsets) so it
+    // stays valid if the roster shifts underneath.
+    @State private var pendingDeletePlayers: [Player] = []
+    @State private var showingDeleteConfirm = false
+
+    // Empty-state "Game Mode" detour as a sheet (#31) — return-able, not a tab
+    // switch. Local since it's triggered only here.
+    @State private var showingGameModeSheet = false
 
     // MARK: - App-Specific
     // Child projects typically replace the entire body with their own
@@ -73,10 +83,13 @@ struct HomeView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
+            Divider()
+
+            // Return-able sheet, not a tab switch (#31).
             Button(action: {
-                selectedTab = .settings
+                showingGameModeSheet = true
             }) {
-                Text("Select your game mode in the settings tab!")
+                Text("Tap here to choose your game mode!")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -99,76 +112,143 @@ struct HomeView: View {
 
             Divider()
 
-            Button(action: {
-                selectedTab = .activityLog
-            }) {
-                Text("Throughout the game, check the Activity Log to review actions!")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-            }
-            .buttonStyle(.plain)
-            .padding(.horizontal)
+            // Plain hint, not a tappable teleport — the Activity Log is empty at launch (#31).
+            Text("Throughout the game, the Activity tab records every action.")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
 
             Spacer()
         }
         .padding()
         .background(Color(.systemGroupedBackground))
+        .sheet(isPresented: $showingGameModeSheet) {
+            gameModeSheet
+        }
+    }
+
+    /// Empty-state "Game Mode" sheet (#31): Done/grabber returns to Players.
+    /// Reuses GameModeSection, so it writes through to the shared SettingsStore.
+    private var gameModeSheet: some View {
+        NavigationStack {
+            Form {
+                GameModeSection()
+            }
+            .navigationTitle("Game Mode")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { showingGameModeSheet = false }
+                }
+            }
+        }
     }
 
     /// The view displaying the list of players.
     private var playersListView: some View {
-        VStack {
+        VStack(spacing: 0) {
             List {
                 ForEach(Array(gameSession.players.enumerated()), id: \.element.id) { index, player in
-                    NavigationLink(destination: PlayerView(player: player, playerIndex: index + 1)) {
+                    // In Edit mode the row shows one Delete button (unless the
+                    // player has exchanged money — see hasExchangedMoney) and does
+                    // not navigate; otherwise it's a tappable row that pushes
+                    // PlayerView. Reorder handles come from .onMove. One Delete tap
+                    // replaces the native minus + slide-in Delete two-step.
+                    if editMode.isEditing {
                         HStack {
-                            PlayerThumbnailView(imageData: player.imageData, size: 44)
-
-                            VStack(alignment: .leading) {
-                                Text(player.name)
-                                    .font(.headline)
-                                    .accessibilityLabel("Player name: \(player.name)")
-                                
-                                if player.token != "" {
-                                    Text("Token: \(player.token)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                        .accessibilityLabel("Player token name: \(player.token)")
+                            playerRow(player)
+                            if !gameSession.hasExchangedMoney(player.id) {
+                                Button("Delete", role: .destructive) {
+                                    requestDelete(player)
                                 }
+                                .buttonStyle(.borderless)
                             }
-                            .frame(minHeight: 40)
-                            
-                            Spacer()
-                            
-                            Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(
-                                    (gameSession.currentState.playerBalances[player.id] ?? 0) >= 0 ? .green : .red
-                                )
                         }
                         .padding(.vertical, 4)
+                    } else {
+                        NavigationLink(destination: PlayerView(player: player, playerIndex: index + 1)) {
+                            playerRow(player)
+                                .padding(.vertical, 4)
+                        }
                     }
                 }
-                .onDelete(perform: deletePlayer)
                 .onMove(perform: movePlayer)
             }
-            Spacer()
+            // editMode at the List level — TabView-level injection doesn't
+            // activate a tab-hosted List (#30).
+            .environment(\.editMode, $editMode)
+
+            // While editing, explain why some rows have no delete control.
+            if editMode.isEditing
+                && gameSession.players.contains(where: { gameSession.hasExchangedMoney($0.id) }) {
+                Text("Players who've exchanged money can't be removed individually. Use Reset Players or Delete All Players in Settings.")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+            }
         }
-
         .background(Color(.systemGroupedBackground))
-    }
-    
-    // MARK: - Helper Functions
-    // Function to add a new placeholder player.
-    
-    private func deletePlayer(at offsets: IndexSet) {
-        gameSession.players.remove(atOffsets: offsets)
+        .alert("Delete Player?", isPresented: $showingDeleteConfirm) {
+            Button("Delete", role: .destructive) {
+                gameSession.deletePlayers(pendingDeletePlayers)
+                pendingDeletePlayers = []
+            }
+            Button("Cancel", role: .cancel) {
+                pendingDeletePlayers = []
+            }
+        } message: {
+            if pendingDeletePlayers.count == 1 {
+                Text("\(pendingDeletePlayers[0].name) will be removed from the game. This can't be undone.")
+            } else {
+                Text("The selected players will be removed from the game. This can't be undone.")
+            }
+        }
     }
 
-    // Function to move players within the list.
-    // This is required for the EditButton's reordering functionality.
+    // MARK: - Helper Functions
+
+    // One roster row's content (thumbnail, name/token, balance) — shared by the
+    // navigating row and the Edit-mode row.
+    private func playerRow(_ player: Player) -> some View {
+        HStack {
+            PlayerThumbnailView(imageData: player.imageData, size: 44)
+
+            VStack(alignment: .leading) {
+                Text(player.name)
+                    .font(.headline)
+                    .accessibilityLabel("Player name: \(player.name)")
+
+                if player.token != "" {
+                    Text("Token: \(player.token)")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .accessibilityLabel("Player token name: \(player.token)")
+                }
+            }
+            .frame(minHeight: 40)
+
+            Spacer()
+
+            Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(
+                    (gameSession.currentState.playerBalances[player.id] ?? 0) >= 0 ? .green : .red
+                )
+        }
+    }
+
+    // Confirm before deleting (destructive, no undo). Deletion goes through
+    // GameSession, which logs a marker and keeps the transaction log.
+    private func requestDelete(_ player: Player) {
+        pendingDeletePlayers = [player]
+        showingDeleteConfirm = true
+    }
+
+    // Reorder players (drives edit-mode reordering).
     private func movePlayer(from source: IndexSet, to destination: Int) {
         gameSession.players.move(fromOffsets: source, toOffset: destination)
     }
@@ -182,7 +262,7 @@ struct HomeView: View {
     // so the preview supplies one for the navigation links.
     NavigationStack {
         HomeView(showingAddPlayerSheet: .constant(false),
-                 selectedTab: .constant(.home))
+                 editMode: .constant(.inactive))
     }
     .environmentObject(sampleGameSession)
     .environmentObject(sampleGameSession.settings)

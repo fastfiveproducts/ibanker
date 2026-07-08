@@ -104,7 +104,7 @@ private struct TopLabelLabeledContentStylePreview: View {
                 labelText: "More Stuff",
                 promptText: "Stuff we want to know"
             )
-            // Another example showing you can place any view in the trailing content
+            // Any view can go in the trailing content.
             LabeledContent {
                 TextField("Email", text: .constant(""))
                     .keyboardType(.emailAddress)

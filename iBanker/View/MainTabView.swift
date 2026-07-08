@@ -62,18 +62,15 @@ struct MainTabView: View {
                     .tabItem { Label("Settings", systemImage: "gear.circle.fill") }
                     .tag(Tab.settings)
             }
-            // Edit mode is owned here (the Edit/Done button lives in
-            // mainToolbar) but injected at the List level inside HomeView —
-            // injecting it on the TabView does NOT activate a tab-hosted List,
-            // so the button showed no reorder handles or delete controls (#30).
-            // Reset it whenever the user switches tabs.
+            // editMode is owned here (Edit/Done button in mainToolbar) but
+            // injected at the List level in HomeView — TabView-level injection
+            // doesn't activate a tab-hosted List (#30). Reset it on tab switch.
             .onChange(of: selectedTabItem) {
                 editMode = .inactive
             }
-            // Also drop out of Edit mode if the roster becomes empty (e.g. the
-            // last player was just deleted): the Edit/Done button is hidden with
-            // no players, so without this a newly re-added player would render in
-            // a stuck Edit mode (#30).
+            // Also exit Edit mode when the roster empties — the Edit button is
+            // hidden with no players, so otherwise a re-added player would render
+            // in a stuck Edit mode (#30).
             .onChange(of: gameSession.players.isEmpty) {
                 if gameSession.players.isEmpty { editMode = .inactive }
             }

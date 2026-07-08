@@ -4,8 +4,6 @@
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/24/25.
 //  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
 //
-//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
-//
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
@@ -15,13 +13,11 @@
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
 //
-//  For licensing inquiries, contact: licenses@fastfiveproducts.com
-//
 
 
 import Foundation
 
-// Struct to hold the default settings for each game mode
+// Default starting balance/salary for each game mode.
 struct GameModeDefaults: Codable, Equatable {
     let initialBalance: Int
     let initialSalary: Int
@@ -33,7 +29,6 @@ struct GameModeDefaults: Codable, Equatable {
     static let fifteenMil = GameModeDefaults(initialBalance: 15000000, initialSalary: 2000000)
 }
 
-// Enum for different game modes
 enum GameMode: String, CaseIterable, Codable, Identifiable {
     case zero = "$0 Balance"
     case fifteenHundred = "$1500 Balance"
@@ -51,7 +46,7 @@ enum GameMode: String, CaseIterable, Codable, Identifiable {
         self == .fourHundredK
     }
 
-    // Computed property to get the default values for a non-custom mode
+    // Default values for a non-custom mode.
     var defaults: GameModeDefaults? {
         switch self {
         case .zero:

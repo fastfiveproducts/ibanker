@@ -4,8 +4,6 @@
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/23/25.
 //  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
 //
-//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
-//
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
@@ -14,8 +12,6 @@
 //  An exception applies: Fast Five Products LLC retains the right to use this code and
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
-//
-//  For licensing inquiries, contact: licenses@fastfiveproducts.com
 //
 
 
@@ -185,19 +181,13 @@ class GameSession: ObservableObject {
     }
     
     // MARK: - Roster Management
-    // Deleting a player never edits the transaction log — every transaction is
-    // kept, so remaining players' derived balances stay correct (a deleted
-    // player's ids simply go inert on replay). The only log effect is a marker
-    // entry appended to the Activity Log. Delete-all is the deliberate
-    // exception: with no players left there is nothing to corrupt, so it clears
-    // the transaction log for a genuine fresh start (see deleteAllPlayers).
+    // Deleting a player keeps the transaction log intact (so other balances stay
+    // correct) and appends an Activity Log marker. Delete-all is the exception:
+    // with no players left it clears the log for a fresh start.
 
-    /// True if the player has been party to a money transfer with another player
-    /// (as sender or recipient). Used to lock single-delete once a player is
-    /// active — a deliberate "don't remove an active player" rail, NOT an
-    /// integrity requirement (deletion keeps all transactions, so removing even
-    /// an entangled player wouldn't corrupt anyone; this just prevents casually
-    /// deleting someone with an established position in the game).
+    /// True if the player has sent or received a transfer. Locks single-delete
+    /// once a player is active — a deliberate guard, not an integrity
+    /// requirement (deletion keeps all transactions either way).
     func hasExchangedMoney(_ playerID: String) -> Bool {
         transactions.contains { tx in
             if case .payPlayer(let recipientID, _) = tx.action {
@@ -207,9 +197,8 @@ class GameSession: ObservableObject {
         }
     }
 
-    /// Remove the given players from the roster (matched by id) and record a
-    /// deletion marker per player in the Activity Log. Transactions are left
-    /// untouched so every remaining player's balance stays correct.
+    /// Remove players (matched by id), appending a deletion marker per player.
+    /// Transactions are left untouched so remaining balances stay correct.
     func deletePlayers(_ playersToDelete: [Player]) {
         let ids = Set(playersToDelete.map { $0.id })
         guard !ids.isEmpty else { return }
@@ -220,11 +209,9 @@ class GameSession: ObservableObject {
         }
     }
 
-    /// Remove every player and reset the game. Clearing the transaction log is
-    /// safe here — no players remain whose derived balance could be corrupted —
-    /// and it stops orphaned transactions accumulating across games (the
-    /// transaction log, unlike the Activity Log, is not retention-capped). The
-    /// Activity Log is kept as the audit trail (#28), with a marker appended.
+    /// Remove every player and clear the transaction log for a fresh start
+    /// (safe — no players remain to corrupt). The Activity Log is kept, with a
+    /// marker appended.
     func deleteAllPlayers() {
         guard !players.isEmpty else { return }
         players.removeAll()
@@ -232,9 +219,8 @@ class GameSession: ObservableObject {
         recordActivity("All players deleted.")
     }
 
-    /// Insert a standalone Activity Log entry not backed by a transaction (roster
-    /// events like deletions). The transaction log remains the sole source of
-    /// derived state; these are presentation-only history markers.
+    /// Append an Activity Log entry not backed by a transaction (e.g. a roster
+    /// deletion marker) — presentation only, never a source of derived state.
     private func recordActivity(_ description: String) {
         guard let modelContext else { return }
         modelContext.insert(ActivityLogEntry(description, timestamp: Date()))

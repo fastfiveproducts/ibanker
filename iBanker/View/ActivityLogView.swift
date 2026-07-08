@@ -70,11 +70,11 @@ struct ActivityLogView: View, DebugPrintable {
                     }
                 }
             }
-            // Open at the bottom (newest) and follow appends while the user is at the bottom;
-            // scrolling up suspends following until they return. Alignment anchors top separately
-            // so a log shorter than the screen reads from the top.
-            // Note: no debounce layer — @Query delivers updates per SwiftData transaction and
-            // template writes are single user-action inserts, unlike DTrol's bursty stream reloads.
+            // Open at the bottom (newest) and follow appends while the user is there;
+            // scrolling up suspends following. Top alignment anchors separately so a
+            // log shorter than the screen reads from the top.
+            // No debounce: @Query delivers one update per SwiftData transaction, and
+            // writes are single user-action inserts (unlike DTrol's bursty stream reloads).
             .scrollPosition($scrollPosition)
             .defaultScrollAnchor(.top, for: .alignment)
             .defaultScrollAnchor(.bottom, for: .initialOffset)
@@ -95,11 +95,10 @@ struct ActivityLogView: View, DebugPrintable {
             }
 
             Spacer()
-            // iBanker divergence from the template (#28): no "Clear All Logs"
-            // button. The log is the game's audit trail — one unconfirmed tap
-            // could erase it mid-game — and log size is already bounded by the
-            // retention cap (ActivityLogEntry.trimToCap). Upstream removal is
-            // proposed as template.ios#167.
+            // iBanker divergence (#28): no "Clear All Logs" button — the log is
+            // the game's audit trail (one tap shouldn't erase it mid-game) and its
+            // size is already bounded by the retention cap (ActivityLogEntry.trimToCap).
+            // Upstream removal proposed as template.ios#167.
         }
         .padding()
     }

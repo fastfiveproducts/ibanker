@@ -4,8 +4,6 @@
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
 //  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
-//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
-//
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
@@ -14,8 +12,6 @@
 //  An exception applies: Fast Five Products LLC retains the right to use this code and
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
-//
-//  For licensing inquiries, contact: licenses@fastfiveproducts.com
 //
 //  SwiftUI reimplementation of v1.3.0's SpinnerViewController ("Spin to
 //  Win", The Game of Life $400K mode): a reel lands on one of four prize

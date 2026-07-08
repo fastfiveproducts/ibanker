@@ -3,8 +3,6 @@
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
 //
-//  Template v0.4.3 — Fast Five Products LLC's public AGPL template.
-//
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
@@ -14,19 +12,14 @@
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
 //
-//  For licensing inquiries, contact: licenses@fastfiveproducts.com
-//
 
 import SwiftUI
 
-/// The "Game Mode Defaults" settings section — the game-mode picker plus the
-/// resulting (or custom) starting balance and salary. Extracted from
-/// `SettingsView` so it can be reused both there and in the empty-state
-/// "Game Mode" sheet (#31), keeping a single source for the picker and its
-/// custom fields. Must be placed inside a `Form`/`List`.
+/// The "Game Mode Defaults" section — mode picker plus the resulting (or
+/// custom) starting balance/salary. Shared by SettingsView and the empty-state
+/// "Game Mode" sheet (#31). Place inside a `Form`/`List`.
 struct GameModeSection: View {
-    // The single shared SettingsStore, injected from iBankerApp (#13) —
-    // inherited by the empty-state sheet's environment as well.
+    // Shared SettingsStore from iBankerApp (#13); inherited by the sheet too.
     @EnvironmentObject private var settings: SettingsStore
 
     var body: some View {
@@ -73,10 +66,9 @@ struct GameModeSection: View {
             }
         }
         .onChange(of: settings.selectedGameMode) {
-            // Changing the mode resets the spinner to the mode's default
-            // (v1.3.0 behavior); the Preferences Toggle remains a manual
-            // override. Lives here so it applies wherever the mode is changed —
-            // the Settings tab or the empty-state Game Mode sheet.
+            // Changing the mode resets the spinner to its default (v1.3.0); the
+            // Preferences toggle stays a manual override. Here so it applies
+            // wherever the mode changes.
             settings.enabledSpinner = settings.selectedGameMode.defaultSpinnerOn
         }
     }

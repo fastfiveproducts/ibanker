@@ -29,10 +29,10 @@ struct iBankerApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .environmentObject(gameSession) // This line is key!
+                .environmentObject(gameSession)
                 .environmentObject(gameSession.settings) // Single shared SettingsStore (#13)
                 .onDisappear {
-                    // Call the save function when the app is closed or backgrounded
+                    // Save on close/background.
                     gameSession.saveGame()
                 }
         }

@@ -52,19 +52,13 @@ struct SettingsView: View {
                     Toggle("Sound effects", isOn: $settings.soundEffects)
                     Toggle("Spin-to-Win Spinner", isOn: $settings.enabledSpinner)
                 }
-                // Game-mode picker + starting defaults, shared with the
-                // empty-state "Game Mode" sheet (#31). The mode-change → spinner
-                // reset now lives inside GameModeSection so it applies wherever
-                // the mode is changed.
+                // Shared with the empty-state "Game Mode" sheet (#31); the
+                // mode → spinner reset lives inside GameModeSection.
                 GameModeSection()
-                // Apple-pattern destructive-settings section (#28, extended in
-                // #30): a plain "Reset" header, red buttons, and a confirmation
-                // on every action — mirrors iOS's own Settings > General >
-                // Transfer or Reset iPhone. No footer: the button labels plus
-                // each confirm alert's message carry the explanation at the
-                // moment of action (the footer was getting heavy with three).
-                // Order is least-destructive → most: Reset Settings, Reset
-                // Players (keeps players), Delete All Players (removes them).
+                // Destructive-settings section (#28, extended #30), mirroring
+                // iOS Settings > General > Reset: red buttons, each confirmed,
+                // ordered least- to most-destructive. No footer — the confirm
+                // alerts carry the explanation.
                 Section {
                     Button("Reset Settings", role: .destructive) {
                         showingResetSettingsAlert = true

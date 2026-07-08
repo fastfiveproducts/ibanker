@@ -3,8 +3,6 @@
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/23/25.
 //
-//  Template v0.2.0 — Fast Five Products LLC's public AGPL template.
-//
 //  Copyright © 2025 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
@@ -14,16 +12,10 @@
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
 //
-//  For licensing inquiries, contact: licenses@fastfiveproducts.com
-//
 
 
 import Foundation
 struct GameState: Equatable, Codable {
-    var playerBalances: [String: Int] // Dictionary: Player ID -> Current Balance
-    var playerSalaries: [String: Int] 
-    // You might also include other relevant game state, e.g.,
-    // var bankBalance: Int // If the bank has its own balance
-    // var gameOver: Bool
-    // var turn: Int
+    var playerBalances: [String: Int] // Player ID -> current balance
+    var playerSalaries: [String: Int]
 }

@@ -4,8 +4,6 @@
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
 //  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
-//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
-//
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
@@ -15,13 +13,11 @@
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
 //
-//  For licensing inquiries, contact: licenses@fastfiveproducts.com
-//
 
 import SwiftUI
 
 struct PlayerView: View {
-    @EnvironmentObject var gameSession: GameSession // Access the shared game session
+    @EnvironmentObject var gameSession: GameSession
     
     let player: Player
     let playerIndex: Int
@@ -71,8 +67,7 @@ struct PlayerView: View {
     
     var body: some View {
         VStack {
-            // Tappable photo: opens the shared change/add/remove flow. The
-            // small camera badge signals editability.
+            // Tappable photo opens the shared change/add/remove flow; the camera badge signals editability.
             Button {
                 showingPhotoDialog = true
             } label: {
@@ -105,16 +100,14 @@ struct PlayerView: View {
             Form {
                 Section {
                         HStack {
-                            // Player Name and Token Name
                             Text("Balance:")
                                 .font(.title2)
                                 .accessibilityLabel("Text: Balance")
                             
                             Spacer()
                             
-                            // Player Balance
                             Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
-                                .font(.title2) // Prominent font for the balance
+                                .font(.title2)
                                 .fontWeight(.bold)
                                 .foregroundColor(
                                     (gameSession.currentState.playerBalances[player.id] ?? 0) >= 0 ? .green : .red
@@ -122,7 +115,6 @@ struct PlayerView: View {
                         }
                         .padding(5)
                         HStack {
-                            // Player Name and Token Name
                             Text("Salary:")
                                 .font(.title2)
                                 .accessibilityLabel("Text: Salary")
@@ -234,26 +226,21 @@ struct PlayerView: View {
             }
             
             Spacer()
-            // You would add more details and functionality here,
-            // such as buttons to modify balance, transaction history, etc.
         }
-        .navigationTitle("Player #\(playerIndex)") // Sets the title of the detail view's navigation bar
-        .navigationBarTitleDisplayMode(.inline) // Makes the title smaller and centered
+        .navigationTitle("Player #\(playerIndex)")
+        .navigationBarTitleDisplayMode(.inline)
         .background(Color(.systemGroupedBackground))
         // Shared photo change/add/remove flow (see PlayerPhotoPicker.swift)
         .playerPhotoPicker(isPresented: $showingPhotoDialog,
                            imageData: photoBinding,
                            isLoading: $isLoadingPhoto)
         .onAppear {
-            // When the view loads, set the TextField's text to the stored salary.
+            // Seed the salary field from the stored salary.
             let currentSalary = gameSession.currentState.playerSalaries[player.id] ?? 200
             salaryInput = currentSalary
         }
-        // --- MODIFIED ---
-        // This modifier watches for any changes to the text field's input.
         .onChange(of: salaryInput) {
-            // As soon as the text changes, update the salary in the GameSession.
-            // This ensures the button's label and the collect salary logic are always in sync.
+            // Persist salary edits immediately so the Collect button label and collect logic stay in sync.
             gameSession.perform(.updateSalary(newSalary: salaryAmount), by: player.id)
         }
     }
@@ -262,22 +249,17 @@ struct PlayerView: View {
 
 #if DEBUG
 #Preview("Player #1") {
-        // Create the GameSession instance *outside* the ViewBuilder's direct scope.
-        // It's a class, so it's a reference type.
+        // GameSession is a class; build it outside the ViewBuilder scope, mutate in onAppear.
         let previewGameSession = GameSession()
 
-        // Define your players here
         let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "car", isLocalOnly: true, salary: 200)
         let playerBob = Player(id: UUID().uuidString, name: "Bob", token: "top.hat.fill", isLocalOnly: true, salary: 200)
 
-        // Now, construct your View. All data manipulation will happen inside onAppear.
         NavigationView {
-            PlayerView(player: playerAlice, playerIndex: 1) // Pass the specific player for this preview
-                .environmentObject(previewGameSession) // Inject the session
+            PlayerView(player: playerAlice, playerIndex: 1)
+                .environmentObject(previewGameSession)
                 .onAppear {
                     // MARK: - Perform Data Setup INSIDE onAppear
-                    // This closure executes when the view appears in the preview.
-                    // Here, imperative code is allowed!
                     previewGameSession.players.append(playerAlice)
                     previewGameSession.players.append(playerBob)
 
@@ -290,22 +272,17 @@ struct PlayerView: View {
 }
 
 #Preview("Player #2") {
-        // Create the GameSession instance *outside* the ViewBuilder's direct scope.
-        // It's a class, so it's a reference type.
+        // GameSession is a class; build it outside the ViewBuilder scope, mutate in onAppear.
         let previewGameSession = GameSession()
 
-        // Define your players here
         let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "red", isLocalOnly: true, salary: 200)
         let playerBob = Player(id: UUID().uuidString, name: "Bob", token: "green", isLocalOnly: true, salary: 200)
 
-        // Now, construct your View. All data manipulation will happen inside onAppear.
         NavigationView {
-            PlayerView(player: playerBob, playerIndex: 2) // Pass the specific player for this preview
-                .environmentObject(previewGameSession) // Inject the session
+            PlayerView(player: playerBob, playerIndex: 2)
+                .environmentObject(previewGameSession)
                 .onAppear {
                     // MARK: - Perform Data Setup INSIDE onAppear
-                    // This closure executes when the view appears in the preview.
-                    // Here, imperative code is allowed!
                     previewGameSession.players.append(playerAlice)
                     previewGameSession.players.append(playerBob)
 

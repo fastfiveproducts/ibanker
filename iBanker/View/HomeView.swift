@@ -83,6 +83,8 @@ struct HomeView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
+            Divider()
+
             // Return-able sheet, not a tab switch (#31).
             Button(action: {
                 showingGameModeSheet = true

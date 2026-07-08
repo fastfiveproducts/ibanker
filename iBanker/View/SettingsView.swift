@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //
 //  Template file created by Elizabeth Maiser, Fast Five Products LLC, on 7/4/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
 //  Template v0.3.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -113,9 +113,7 @@ struct SettingsView: View {
     }
     
     private func resetPlayers() {
-        for player in gameSession.players{
-            gameSession.perform(.resetPlayer(balance: settings.effectiveDefaultBalance, salary: settings.effectiveDefaultSalary), by: player.id)
-        }
+        gameSession.resetPlayers(balance: settings.effectiveDefaultBalance, salary: settings.effectiveDefaultSalary)
         // One shake for the whole reset (not per player), matching v1.3.0
         SoundPlayer.shared.playSystemSound(.shake)
     }

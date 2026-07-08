@@ -2,11 +2,9 @@
 //  GameSession.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/23/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
-//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
-//
-//  Copyright © 2025 Fast Five Products LLC. All rights reserved.
+//  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
 //  See the LICENSE file at the root of this repository for full terms.
@@ -14,8 +12,6 @@
 //  An exception applies: Fast Five Products LLC retains the right to use this code and
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
-//
-//  For licensing inquiries, contact: licenses@fastfiveproducts.com
 //
 
 
@@ -89,7 +85,7 @@ class GameSession: ObservableObject {
         case .addMoney(let amount), .subtractMoney(let amount),
              .collectSalary(let amount), .payPlayer(_, let amount):
             guard amount > 0 else { return }
-        case .updateSalary, .resetPlayer, .custom:
+        case .updateSalary, .resetPlayer, .createPlayer, .custom:
             break
         }
 
@@ -124,7 +120,7 @@ class GameSession: ObservableObject {
             SoundPlayer.shared.play(.coinDrop)
         case .payPlayer:
             SoundPlayer.shared.play(.happy)
-        case .updateSalary, .resetPlayer, .custom:
+        case .updateSalary, .resetPlayer, .createPlayer, .custom:
             break
         }
 
@@ -173,6 +169,10 @@ class GameSession: ObservableObject {
             return "\(name) subtracted $\(amount)."
         case .resetPlayer(let balance, let salary):
             return "\(name) was reset to $\(balance) and $\(salary) salary."
+        case .createPlayer(let balance, let salary):
+            return salary > 0
+                ? "\(name) joined the game with $\(balance) and a $\(salary) salary."
+                : "\(name) joined the game with $\(balance)."
         case .updateSalary:
             return nil
         case .custom(let description):
@@ -180,6 +180,71 @@ class GameSession: ObservableObject {
         }
     }
     
+    // MARK: - Roster Management
+    // Single-delete keeps the transaction log intact (so other balances stay
+    // correct) and appends an Activity Log marker. The whole-roster resets —
+    // Reset Players (clear + re-seed to defaults) and Delete All Players (clear,
+    // no players) — clear the log, since no surviving balance depends on it.
+
+    /// True if the player has sent or received a transfer. Locks single-delete
+    /// once a player is active — a deliberate guard, not an integrity requirement
+    /// (deletion keeps all transactions either way). Reset Players clears the
+    /// log, so a reset naturally unlocks everyone.
+    func hasExchangedMoney(_ playerID: String) -> Bool {
+        transactions.contains { tx in
+            if case .payPlayer(let recipientID, _) = tx.action {
+                return tx.playerID == playerID || recipientID == playerID
+            }
+            return false
+        }
+    }
+
+    /// Remove players (matched by id), appending a deletion marker per player.
+    /// Transactions are left untouched so remaining balances stay correct.
+    func deletePlayers(_ playersToDelete: [Player]) {
+        let ids = Set(playersToDelete.map { $0.id })
+        guard !ids.isEmpty else { return }
+        let removedNames = players.filter { ids.contains($0.id) }.map { $0.name }
+        players.removeAll { ids.contains($0.id) }
+        for name in removedNames {
+            recordActivity("\(name.isEmpty ? "A player" : name) was deleted.")
+        }
+    }
+
+    /// Reset every player to the given defaults. Clears the transaction log and
+    /// re-seeds each player, so a reset is a genuine fresh start (and a natural
+    /// compaction point) — safe because every balance is being reset anyway. The
+    /// Activity Log keeps the per-player reset entries.
+    func resetPlayers(balance: Int, salary: Int) {
+        transactions.removeAll()
+        for player in players {
+            perform(.resetPlayer(balance: balance, salary: salary), by: player.id)
+        }
+    }
+
+    /// Remove every player and clear the transaction log for a fresh start
+    /// (safe — no players remain to corrupt). The Activity Log is kept, with a
+    /// marker appended.
+    func deleteAllPlayers() {
+        guard !players.isEmpty else { return }
+        players.removeAll()
+        transactions.removeAll()
+        recordActivity("All players deleted.")
+    }
+
+    /// Append an Activity Log entry not backed by a transaction (e.g. a roster
+    /// deletion marker) — presentation only, never a source of derived state.
+    private func recordActivity(_ description: String) {
+        guard let modelContext else { return }
+        modelContext.insert(ActivityLogEntry(description, timestamp: Date()))
+    }
+
+    /// Record a game-mode change to the Activity Log (#32) — a settings change,
+    /// not a transaction, so it's a standalone marker like a roster deletion.
+    func recordGameModeChange(_ mode: GameMode) {
+        recordActivity("Game mode changed to \(mode.rawValue).")
+    }
+
     /// Example of how you might implement undo (simplistic, real undo is more complex)
     func undoLastTransaction() {
         if !transactions.isEmpty {

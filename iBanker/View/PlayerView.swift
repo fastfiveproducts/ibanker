@@ -6,7 +6,7 @@
 //
 //  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
-//  Copyright © 2025 Fast Five Products LLC. All rights reserved.
+//  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
 //  See the LICENSE file at the root of this repository for full terms.

@@ -4,7 +4,7 @@
 //  Template created by Pete Maiser, July 2024 through May 2025
 //  Split from MenuView ~restored by Pete Maiser, Fast Five Products LLC, on 10/23/25.
 //  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
 //
 //  Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -25,11 +25,25 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var gameSession: GameSession // Access the shared game session
 
-    // The add-player sheet and tab selection are owned by MainTabView (with
-    // its toolbar entry points); these bindings let the empty state's inline
-    // buttons present the sheet and switch tabs.
+    // The add-player sheet is owned by MainTabView (its toolbar has the entry
+    // point); this binding lets the empty state's inline button present it too.
     @Binding var showingAddPlayerSheet: Bool
-    @Binding var selectedTab: Tab
+
+    // Edit mode is owned by MainTabView (its toolbar has the Edit/Done button)
+    // and injected here so it can be attached at the List level — the only place
+    // it reliably activates a tab-hosted List (#30).
+    @Binding var editMode: EditMode
+
+    // Deleting a player is destructive and can't be undone, so it goes through a
+    // confirmation. Capture the targeted players (not offsets) so the confirm
+    // stays valid even if the roster changes underneath it.
+    @State private var pendingDeletePlayers: [Player] = []
+    @State private var showingDeleteConfirm = false
+
+    // The empty state offers a quick "Game Mode" detour as a sheet (#31) — a
+    // return-able modal rather than a tab switch. Owned locally since it's
+    // triggered only from here and has no toolbar entry point.
+    @State private var showingGameModeSheet = false
 
     // MARK: - App-Specific
     // Child projects typically replace the entire body with their own
@@ -73,10 +87,12 @@ struct HomeView: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
 
+            // Game-mode setup as a return-able sheet, not a tab switch (#31):
+            // dismissing it drops the user right back here.
             Button(action: {
-                selectedTab = .settings
+                showingGameModeSheet = true
             }) {
-                Text("Select your game mode in the settings tab!")
+                Text("Tap here to choose your game mode!")
                     .font(.subheadline)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -99,26 +115,46 @@ struct HomeView: View {
 
             Divider()
 
-            Button(action: {
-                selectedTab = .activityLog
-            }) {
-                Text("Throughout the game, check the Activity Log to review actions!")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-            }
-            .buttonStyle(.plain)
-            .padding(.horizontal)
+            // Informational only (#31): the Activity Log is empty on a fresh
+            // launch, so this is a plain hint — not a tappable teleport to a
+            // blank screen.
+            Text("Throughout the game, the Activity tab records every action.")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
 
             Spacer()
         }
         .padding()
         .background(Color(.systemGroupedBackground))
+        .sheet(isPresented: $showingGameModeSheet) {
+            gameModeSheet
+        }
+    }
+
+    /// A focused "Game Mode" detour presented from the empty state (#31). A
+    /// sheet's built-in dismissal (grabber / Done) returns the user straight to
+    /// Players — a return-able modal instead of a disorienting tab switch. Reuses
+    /// GameModeSection so it writes through to the shared SettingsStore.
+    private var gameModeSheet: some View {
+        NavigationStack {
+            Form {
+                GameModeSection()
+            }
+            .navigationTitle("Game Mode")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") { showingGameModeSheet = false }
+                }
+            }
+        }
     }
 
     /// The view displaying the list of players.
     private var playersListView: some View {
-        VStack {
+        VStack(spacing: 0) {
             List {
                 ForEach(Array(gameSession.players.enumerated()), id: \.element.id) { index, player in
                     NavigationLink(destination: PlayerView(player: player, playerIndex: index + 1)) {
@@ -129,7 +165,7 @@ struct HomeView: View {
                                 Text(player.name)
                                     .font(.headline)
                                     .accessibilityLabel("Player name: \(player.name)")
-                                
+
                                 if player.token != "" {
                                     Text("Token: \(player.token)")
                                         .font(.subheadline)
@@ -138,9 +174,9 @@ struct HomeView: View {
                                 }
                             }
                             .frame(minHeight: 40)
-                            
+
                             Spacer()
-                            
+
                             Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
                                 .font(.title2)
                                 .fontWeight(.bold)
@@ -150,21 +186,58 @@ struct HomeView: View {
                         }
                         .padding(.vertical, 4)
                     }
+                    // Swipe-to-delete is armed only inside Edit mode, and a player
+                    // who has exchanged money with someone is locked from
+                    // individual deletion (see GameSession.hasExchangedMoney).
+                    .deleteDisabled(!editMode.isEditing || gameSession.hasExchangedMoney(player.id))
                 }
-                .onDelete(perform: deletePlayer)
+                .onDelete(perform: requestDelete)
                 .onMove(perform: movePlayer)
             }
-            Spacer()
-        }
+            // Attach editMode at the List level: injecting it on the TabView (in
+            // MainTabView) does not activate a tab-hosted List, so the Edit
+            // button would show no reorder handles or delete controls (#30).
+            .environment(\.editMode, $editMode)
 
+            // While editing, explain why some rows have no delete control.
+            if editMode.isEditing
+                && gameSession.players.contains(where: { gameSession.hasExchangedMoney($0.id) }) {
+                Text("Players who've exchanged money can't be removed individually. Use Reset Players or Delete All Players in Settings.")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+            }
+        }
         .background(Color(.systemGroupedBackground))
+        .alert("Delete Player?", isPresented: $showingDeleteConfirm) {
+            Button("Delete", role: .destructive) {
+                gameSession.deletePlayers(pendingDeletePlayers)
+                pendingDeletePlayers = []
+            }
+            Button("Cancel", role: .cancel) {
+                pendingDeletePlayers = []
+            }
+        } message: {
+            if pendingDeletePlayers.count == 1 {
+                Text("\(pendingDeletePlayers[0].name) will be removed from the game. This can't be undone.")
+            } else {
+                Text("The selected players will be removed from the game. This can't be undone.")
+            }
+        }
     }
-    
+
     // MARK: - Helper Functions
-    // Function to add a new placeholder player.
-    
-    private func deletePlayer(at offsets: IndexSet) {
-        gameSession.players.remove(atOffsets: offsets)
+
+    // Capture the players targeted by a delete gesture and ask for confirmation
+    // before removing — deletion is destructive and there's no undo. Deleting
+    // goes through GameSession so a marker is recorded to the Activity Log and
+    // the transaction log is preserved.
+    private func requestDelete(at offsets: IndexSet) {
+        pendingDeletePlayers = offsets.map { gameSession.players[$0] }
+        guard !pendingDeletePlayers.isEmpty else { return }
+        showingDeleteConfirm = true
     }
 
     // Function to move players within the list.
@@ -182,7 +255,7 @@ struct HomeView: View {
     // so the preview supplies one for the navigation links.
     NavigationStack {
         HomeView(showingAddPlayerSheet: .constant(false),
-                 selectedTab: .constant(.home))
+                 editMode: .constant(.inactive))
     }
     .environmentObject(sampleGameSession)
     .environmentObject(sampleGameSession.settings)

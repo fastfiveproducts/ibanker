@@ -2,11 +2,11 @@
 //  AddNewPlayerView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
 //
 //  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
-//  Copyright © 2025 Fast Five Products LLC. All rights reserved.
+//  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
 //  See the LICENSE file at the root of this repository for full terms.
@@ -106,9 +106,14 @@ struct AddNewPlayerView: View {
 
                 Section {
                     Button("Save Player") {
-                        // Safely parse balance and salary, defaulting to 0 if empty or invalid
-                        let finalBalance = Int(playerBalance ?? 0.0)
-                        let finalSalary = playerSalary ?? 0
+                        // Safely parse balance and salary, defaulting to 0 if empty or invalid.
+                        // Starting money is non-negative: clamp so an accidental negative
+                        // (e.g. a hardware-keyboard minus on iPad) can't seed a player at a
+                        // negative balance. Previously a negative balance was silently zeroed
+                        // as a side effect of perform()'s amount>0 guard; the unconditional
+                        // .createPlayer (#32) has no such guard, so we clamp explicitly here.
+                        let finalBalance = max(0, Int(playerBalance ?? 0.0))
+                        let finalSalary = max(0, playerSalary ?? 0)
 
                         let newPlayer = Player(id: UUID().uuidString,
                                                name: playerName.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -117,18 +122,18 @@ struct AddNewPlayerView: View {
                                                salary: finalSalary,
                                                imageData: playerImageData)
 
-                        // Call the closure to pass the new player back
+                        // Call the closure to pass the new player back first, so
+                        // the player exists in the roster before we perform the
+                        // creation transaction (the Activity Log looks up the
+                        // player's name by id).
                         onSave(newPlayer)
 
-                        // Add a transaction for the initial balance
-                        if finalBalance != 0 {
-                            gameSession.perform(.addMoney(amount: finalBalance), by: newPlayer.id)
-                        }
-                        
-                        if finalSalary != 0 {
-                            gameSession.perform(.updateSalary(newSalary: finalSalary), by: newPlayer.id)
-                        }
-
+                        // Seed the opening balance and salary as one first-class
+                        // creation event (#32). Unconditional — a $0/$0 player is
+                        // still logged as "joined the game", and creation is silent
+                        // (no cash-register), unlike a mid-game deposit.
+                        gameSession.perform(.createPlayer(balance: finalBalance, salary: finalSalary),
+                                            by: newPlayer.id)
 
                         dismiss() // Dismiss the sheet
                     }

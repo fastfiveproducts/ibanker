@@ -2,10 +2,11 @@
 //  GameStateReducer.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/23/25.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
 //
-//  Template v0.2.0 — Fast Five Products LLC's public AGPL template.
+//  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
-//  Copyright © 2025 Fast Five Products LLC. All rights reserved.
+//  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
 //  This file is part of a project licensed under the GNU Affero General Public License v3.0.
 //  See the LICENSE file at the root of this repository for full terms.
@@ -40,8 +41,6 @@ class GameStateReducer {
             switch transaction.action {
             case .collectSalary(let amount):
                 currentPlayerBalance += amount
-                // You might also subtract from a central "bank" balance here if you track it
-                // currentGameState.bankBalance -= amount
 
             case .payPlayer(let recipientPlayerID, let amount):
                 currentPlayerBalance -= amount
@@ -59,6 +58,10 @@ class GameStateReducer {
                 currentPlayerSalary = newSalary
                 
             case .resetPlayer(let balance, let salary):
+                currentPlayerBalance = balance
+                currentPlayerSalary = salary
+
+            case .createPlayer(let balance, let salary):
                 currentPlayerBalance = balance
                 currentPlayerSalary = salary
 

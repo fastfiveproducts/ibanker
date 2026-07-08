@@ -4,7 +4,7 @@
 //  Template created by Pete Maiser, July 2024 through May 2025
 //  Split from MenuView ~restored by Pete Maiser, Fast Five Products LLC, on 10/23/25.
 //  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
 //
 //  Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -148,40 +148,29 @@ struct HomeView: View {
         VStack(spacing: 0) {
             List {
                 ForEach(Array(gameSession.players.enumerated()), id: \.element.id) { index, player in
-                    NavigationLink(destination: PlayerView(player: player, playerIndex: index + 1)) {
+                    // In Edit mode the row shows one Delete button (unless the
+                    // player has exchanged money — see hasExchangedMoney) and does
+                    // not navigate; otherwise it's a tappable row that pushes
+                    // PlayerView. Reorder handles come from .onMove. One Delete tap
+                    // replaces the native minus + slide-in Delete two-step.
+                    if editMode.isEditing {
                         HStack {
-                            PlayerThumbnailView(imageData: player.imageData, size: 44)
-
-                            VStack(alignment: .leading) {
-                                Text(player.name)
-                                    .font(.headline)
-                                    .accessibilityLabel("Player name: \(player.name)")
-
-                                if player.token != "" {
-                                    Text("Token: \(player.token)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                        .accessibilityLabel("Player token name: \(player.token)")
+                            playerRow(player)
+                            if !gameSession.hasExchangedMoney(player.id) {
+                                Button("Delete", role: .destructive) {
+                                    requestDelete(player)
                                 }
+                                .buttonStyle(.borderless)
                             }
-                            .frame(minHeight: 40)
-
-                            Spacer()
-
-                            Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                                .foregroundColor(
-                                    (gameSession.currentState.playerBalances[player.id] ?? 0) >= 0 ? .green : .red
-                                )
                         }
                         .padding(.vertical, 4)
+                    } else {
+                        NavigationLink(destination: PlayerView(player: player, playerIndex: index + 1)) {
+                            playerRow(player)
+                                .padding(.vertical, 4)
+                        }
                     }
-                    // Swipe-delete only in Edit mode; a player who has exchanged
-                    // money is locked (see hasExchangedMoney).
-                    .deleteDisabled(!editMode.isEditing || gameSession.hasExchangedMoney(player.id))
                 }
-                .onDelete(perform: requestDelete)
                 .onMove(perform: movePlayer)
             }
             // editMode at the List level — TabView-level injection doesn't
@@ -219,11 +208,41 @@ struct HomeView: View {
 
     // MARK: - Helper Functions
 
+    // One roster row's content (thumbnail, name/token, balance) — shared by the
+    // navigating row and the Edit-mode row.
+    private func playerRow(_ player: Player) -> some View {
+        HStack {
+            PlayerThumbnailView(imageData: player.imageData, size: 44)
+
+            VStack(alignment: .leading) {
+                Text(player.name)
+                    .font(.headline)
+                    .accessibilityLabel("Player name: \(player.name)")
+
+                if player.token != "" {
+                    Text("Token: \(player.token)")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .accessibilityLabel("Player token name: \(player.token)")
+                }
+            }
+            .frame(minHeight: 40)
+
+            Spacer()
+
+            Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(
+                    (gameSession.currentState.playerBalances[player.id] ?? 0) >= 0 ? .green : .red
+                )
+        }
+    }
+
     // Confirm before deleting (destructive, no undo). Deletion goes through
     // GameSession, which logs a marker and keeps the transaction log.
-    private func requestDelete(at offsets: IndexSet) {
-        pendingDeletePlayers = offsets.map { gameSession.players[$0] }
-        guard !pendingDeletePlayers.isEmpty else { return }
+    private func requestDelete(_ player: Player) {
+        pendingDeletePlayers = [player]
         showingDeleteConfirm = true
     }
 

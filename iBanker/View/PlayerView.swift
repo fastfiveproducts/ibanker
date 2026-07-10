@@ -2,7 +2,7 @@
 //  PlayerView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -27,6 +27,14 @@ struct PlayerView: View {
     @State private var subtractInput: Int? = nil
     @State private var sendInput: Int? = nil
     @State private var selectedPlayer: Player? = nil
+
+    // Keyboard focus (#35): the number pad has no Return key, so the shared
+    // keyboardDoneToolbar dismisses it, and the action buttons clear focus
+    // so the keyboard hides once an amount is applied.
+    private enum Field {
+        case salary, add, subtract, send
+    }
+    @FocusState private var focusedField: Field?
 
     // Change/add/remove the player's photo (#20 follow-up; v1.3.0 allowed
     // this from the detail screen). `player` is a by-value copy, so the
@@ -97,15 +105,17 @@ struct PlayerView: View {
                 .font(.headline)
                 .padding(.bottom, 20)
             
+            // Money values stay large and bold (glanceable across the game
+            // table); labels, entry fields, and buttons use standard Form
+            // sizes (#35).
             Form {
                 Section {
                         HStack {
                             Text("Balance:")
-                                .font(.title2)
                                 .accessibilityLabel("Text: Balance")
-                            
+
                             Spacer()
-                            
+
                             Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
                                 .font(.title2)
                                 .fontWeight(.bold)
@@ -113,44 +123,42 @@ struct PlayerView: View {
                                     (gameSession.currentState.playerBalances[player.id] ?? 0) >= 0 ? .green : .red
                                 )
                         }
-                        .padding(5)
                         HStack {
                             Text("Salary:")
-                                .font(.title2)
                                 .accessibilityLabel("Text: Salary")
-                            
+
                             Spacer()
-                            
+
                             TextField("Enter Salary", value: $salaryInput, formatter: integerFormatter)
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .keyboardType(.numberPad)
                                 .autocorrectionDisabled(true)
                                 .multilineTextAlignment(.trailing)
+                                .focused($focusedField, equals: .salary)
                         }
-                        .padding(5)
                 }
                 
                 Section {
                     Button("Collect $\(salaryAmount) Salary") {
+                        focusedField = nil
                         gameSession.perform(.collectSalary(amount: salaryAmount), by: player.id)
                     }
-                    .font(.title2)
-                    .padding(5)
                 }
                 
                 Section {
                     HStack {
                         Text("Add $:")
-                            .font(.title2)
                         Spacer()
                         TextField("Enter Amount", value: $addInput, formatter: integerFormatter)
-                            .font(.title2)
-                            .fontWeight(.bold)
                             .keyboardType(.numberPad)
                             .autocorrectionDisabled(true)
                             .multilineTextAlignment(.trailing)
+                            .focused($focusedField, equals: .add)
                         Button {
+                            // Resign focus before clearing, so an end-editing
+                            // re-commit of the field text can't resurrect the amount.
+                            focusedField = nil
                             gameSession.perform(.addMoney(amount: addAmount), by: player.id)
                             addInput = nil
                         } label: {
@@ -159,18 +167,16 @@ struct PlayerView: View {
                                 .foregroundColor(.green)
                         }
                     }
-                    .padding(5)
                     HStack {
                         Text("Subtract $:")
-                            .font(.title2)
                         Spacer()
                         TextField("Enter Amount", value: $subtractInput, formatter: integerFormatter)
-                            .font(.title2)
-                            .fontWeight(.bold)
                             .keyboardType(.numberPad)
                             .autocorrectionDisabled(true)
                             .multilineTextAlignment(.trailing)
+                            .focused($focusedField, equals: .subtract)
                         Button {
+                            focusedField = nil
                             gameSession.perform(.subtractMoney(amount: subtractAmount), by: player.id)
                             subtractInput = nil
                         } label: {
@@ -179,22 +185,18 @@ struct PlayerView: View {
                                 .foregroundColor(.red)
                         }
                     }
-                    .padding(5)
                     VStack {
                         HStack {
                             Text("Send Amount:")
-                                .font(.title2)
                             Spacer()
                             TextField("Enter Amount", value: $sendInput, formatter: integerFormatter)
-                                .font(.title2)
-                                .fontWeight(.bold)
                                 .keyboardType(.numberPad)
                                 .autocorrectionDisabled(true)
                                 .multilineTextAlignment(.trailing)
+                                .focused($focusedField, equals: .send)
                         }
                         HStack {
                             Text("to player:")
-                                .font(.title2)
                             Spacer()
                             Menu {
                                 ForEach(gameSession.players.filter { $0.id != player.id }) { otherPlayer in
@@ -210,6 +212,7 @@ struct PlayerView: View {
                             .buttonStyle(.bordered)
                             Button {
                                 if let selectedPlayer = selectedPlayer {
+                                    focusedField = nil
                                     gameSession.perform(.payPlayer(selectedPlayer.id, amount: sendAmount), by: player.id)
                                     sendInput = nil
                                 }
@@ -221,9 +224,10 @@ struct PlayerView: View {
                             .disabled(selectedPlayer == nil)
                         }
                     }
-                    .padding(5)
                 }
             }
+            .keyboardDoneToolbar(focus: $focusedField)
+            .scrollDismissesKeyboard(.interactively)
             
             Spacer()
         }

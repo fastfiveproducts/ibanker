@@ -4,7 +4,7 @@
 //  Template created by Pete Maiser, July 2024 through May 2025
 //  Renamed from HomeView by Pete Maiser, Fast Five Products LLC, on 10/23/25.
 //  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //      Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
@@ -58,7 +58,9 @@ struct MainTabView: View {
                     .tabItem { Label("Activity", systemImage: "list.bullet.clipboard.fill") }
                     .tag(Tab.activityLog)
 
-                SettingsView()
+                // selectedTab binding lets the destructive reset actions return
+                // to the Players tab (#35), mirroring the editMode pattern above.
+                SettingsView(selectedTab: $selectedTabItem)
                     .tabItem { Label("Settings", systemImage: "gear.circle.fill") }
                     .tag(Tab.settings)
             }
@@ -88,8 +90,6 @@ struct MainTabView: View {
                 SpinnerView()
             }
         }
-        // Apply the accent color to the selected tab item
-        .accentColor(.accentColor)
         // Hand the shared GameSession the SwiftData context so performed actions
         // are recorded to the Activity Log (see GameSession.perform), and run
         // log retention (template v0.4.0): trim to the cap at launch.

@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //
 //  Template file created by Elizabeth Maiser, Fast Five Products LLC, on 7/4/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //
 //  Template v0.3.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -57,7 +57,8 @@ struct SettingsView: View {
                     Toggle("Spin-to-Win Spinner", isOn: $settings.enabledSpinner)
                 }
                 // Shared with the empty-state "Game Mode" sheet (#31); the
-                // mode → spinner reset lives inside GameModeSection.
+                // mode → spinner reset (and the custom fields' keyboard Done
+                // accessory, #37) live inside GameModeSection.
                 GameModeSection()
                 // Destructive-settings section (#28, extended #30), mirroring
                 // iOS Settings > General > Reset: red buttons, each confirmed,

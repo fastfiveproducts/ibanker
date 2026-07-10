@@ -7,9 +7,9 @@ iBanker is being rewritten in SwiftUI and adopts Fast Five Products LLC's public
 
 ## Build Command
 ```bash
-xcodebuild build -project iBanker.xcodeproj -scheme "iBanker" -destination 'platform=iOS Simulator,name=iPhone 17' -sdk iphonesimulator ONLY_ACTIVE_ARCH=YES -quiet
+xcodebuild build -project iBanker.xcodeproj -scheme "default" -destination 'platform=iOS Simulator,name=iPhone 17' -sdk iphonesimulator ONLY_ACTIVE_ARCH=YES -quiet
 ```
-- The active (and only) Xcode project is `iBanker.xcodeproj` (target/scheme `iBanker`, bundle id `com.maiser.ibanker`). Passing `-project iBanker.xcodeproj` is not strictly required now that the repo has a single project, but keep it explicit for clarity.
+- The active (and only) Xcode project is `iBanker.xcodeproj` (target `iBanker`, shared scheme `default` — the FFP convention, matching the template's build command; bundle id `com.maiser.ibanker`). Passing `-project iBanker.xcodeproj` is not strictly required now that the repo has a single project, but keep it explicit for clarity.
 
 
 ## What This App Is
@@ -44,7 +44,7 @@ Both files are template v0.4.0 adoptions: entries are **retention-capped** (`Act
 - `MainTabView` (template-skeleton merge file) owns the `NavigationStack`, the Home / Activity / Settings tabs, the brand navigation title, the `mainToolbar` extension (Edit / Spin-to-Win / Add Player, gated on the Home tab), and the add-player/spinner sheets. Per-tab `navigationTitle`/`toolbar` preferences do NOT propagate through a `TabView` to the enclosing stack — put per-tab bar items in `mainToolbar`, not in tab content.
 - `HomeView` (merge-pattern body) is the player roster: lists/edits players (delete, reorder) and shows live balances; presents `PlayerView` pushes. **Edit mode** (`@Binding editMode`) is owned by `MainTabView` (its `mainToolbar` Edit/Done button) but injected with `.environment(\.editMode, …)` at the **List level here** — injecting it on the `TabView` does not activate a tab-hosted List (#30). Swipe-to-delete is armed only in Edit mode, and a player who has exchanged money (`GameSession.hasExchangedMoney`) is locked from individual deletion (roster deletes go through `GameSession`, which keeps the transaction log and appends an Activity Log marker; **Delete All Players** in Settings additionally clears the transaction log for a fresh start).
 - `PlayerView` is the per-player banking screen (collect salary, add/subtract, send to another player).
-- `ViewSupport/` holds presentation config aligned with the template: `AppConfig` (merge file — brand, `dynamicSizeMax`, colors), `CustomLabeledContentStyle`, `ErrorAlertViewModifier`, plus app-owned `PlayerThumbnailView`/`CameraImagePicker`/`KeyboardDoneToolbar` (the shared number-pad "Done" keyboard accessory, #35 — apply once per screen).
+- `ViewSupport/` holds presentation config aligned with the template: `AppConfig` (merge file — brand, `dynamicSizeMax`, colors), `CustomLabeledContentStyle`, `ErrorAlertViewModifier`, plus app-owned `PlayerThumbnailView`/`CameraImagePicker`/`KeyboardDoneToolbar` (the shared number-pad "Done" keyboard accessory, #35/#37 — pushed screens and sheets attach it once at Form/container level; in a TAB-hosted Form it renders only from inside a list cell, attached to exactly ONE row — see the placement rules in that file) and `IntegerFormatter` (the one shared money-entry `NumberFormatter`, #37).
 - `Utilities/` — template `DebugLogging` (the `DebugPrintable` protocol's `debugprint(_:)`, release no-op, plus `deviceLog`), template `PreviewConfig` (`isPreview`), and app-owned `SoundPlayer`/`PlayerImageMaker`.
 
 

@@ -2,7 +2,7 @@
 //  AddNewPlayerView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -43,17 +43,7 @@ struct AddNewPlayerView: View {
 
     // A closure to pass the new Player object back to the HomeView.
     var onSave: (Player) -> Void
-    
-    // Formatter for the playerSalary field (integers only)
-    private var integerFormatter: NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .none
-        formatter.usesGroupingSeparator = false
-        formatter.generatesDecimalNumbers = false
-        formatter.maximumFractionDigits = 0
-        return formatter
-    }
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -96,7 +86,7 @@ struct AddNewPlayerView: View {
                         Text("Balance:")
                         HStack(spacing: 0) {
                             Text("$")
-                            TextField("Initial Balance", value: $playerBalance, formatter: integerFormatter)
+                            TextField("Initial Balance", value: $playerBalance, formatter: NumberFormatter.integer)
                                 .keyboardType(.numberPad)
                                 .autocorrectionDisabled()
                                 .focused($focusedField, equals: .balance)
@@ -107,7 +97,7 @@ struct AddNewPlayerView: View {
                         Text("Salary:")
                         HStack(spacing: 0) {
                             Text("$")
-                            TextField("Initial Salary", value: $playerSalary, formatter: integerFormatter)
+                            TextField("Initial Salary", value: $playerSalary, formatter: NumberFormatter.integer)
                                 .keyboardType(.numberPad)
                                 .autocorrectionDisabled()
                                 .focused($focusedField, equals: .salary)
@@ -171,6 +161,8 @@ struct AddNewPlayerView: View {
                         self.playerSalary = settings.effectiveDefaultSalary
                     }
                 }
+                // Open ready to type the name (#37 rider)
+                focusedField = .name
             }
         }
     }

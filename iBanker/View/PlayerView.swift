@@ -2,7 +2,7 @@
 //  PlayerView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -63,16 +63,6 @@ struct PlayerView: View {
     private var sendAmount: Int {
         Int(sendInput ?? 0)    }
     
-    // Formatter for the playerSalary field (integers only)
-    private var integerFormatter: NumberFormatter {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .none
-        formatter.usesGroupingSeparator = false
-        formatter.generatesDecimalNumbers = false
-        formatter.maximumFractionDigits = 0
-        return formatter
-    }
-    
     var body: some View {
         VStack {
             // Tappable photo opens the shared change/add/remove flow; the camera badge signals editability.
@@ -129,7 +119,7 @@ struct PlayerView: View {
 
                             Spacer()
 
-                            TextField("Enter Salary", value: $salaryInput, formatter: integerFormatter)
+                            TextField("Enter Salary", value: $salaryInput, formatter: NumberFormatter.integer)
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .keyboardType(.numberPad)
@@ -150,7 +140,7 @@ struct PlayerView: View {
                     HStack {
                         Text("Add $:")
                         Spacer()
-                        TextField("Enter Amount", value: $addInput, formatter: integerFormatter)
+                        TextField("Enter Amount", value: $addInput, formatter: NumberFormatter.integer)
                             .keyboardType(.numberPad)
                             .autocorrectionDisabled(true)
                             .multilineTextAlignment(.trailing)
@@ -170,7 +160,7 @@ struct PlayerView: View {
                     HStack {
                         Text("Subtract $:")
                         Spacer()
-                        TextField("Enter Amount", value: $subtractInput, formatter: integerFormatter)
+                        TextField("Enter Amount", value: $subtractInput, formatter: NumberFormatter.integer)
                             .keyboardType(.numberPad)
                             .autocorrectionDisabled(true)
                             .multilineTextAlignment(.trailing)
@@ -189,7 +179,7 @@ struct PlayerView: View {
                         HStack {
                             Text("Send Amount:")
                             Spacer()
-                            TextField("Enter Amount", value: $sendInput, formatter: integerFormatter)
+                            TextField("Enter Amount", value: $sendInput, formatter: NumberFormatter.integer)
                                 .keyboardType(.numberPad)
                                 .autocorrectionDisabled(true)
                                 .multilineTextAlignment(.trailing)

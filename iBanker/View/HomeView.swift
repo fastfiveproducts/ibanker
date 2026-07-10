@@ -4,7 +4,7 @@
 //  Template created by Pete Maiser, July 2024 through May 2025
 //  Split from MenuView ~restored by Pete Maiser, Fast Five Products LLC, on 10/23/25.
 //  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
 //
 //  Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -89,10 +89,14 @@ struct HomeView: View {
             Button(action: {
                 showingGameModeSheet = true
             }) {
-                Text("Tap here to choose your game mode!")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
+                VStack(spacing: 4) {
+                    Text("Tap here to choose your game mode!")
+                        .font(.subheadline)
+                    Text("You can change it later in the Settings tab.")
+                        .font(.footnote)
+                }
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
             }
             .buttonStyle(.plain)
             .padding(.horizontal)

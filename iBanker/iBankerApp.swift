@@ -2,7 +2,7 @@
 //  iBankerApp.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
 //
 //  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -31,6 +31,9 @@ struct iBankerApp: App {
             MainTabView()
                 .environmentObject(gameSession)
                 .environmentObject(gameSession.settings) // Single shared SettingsStore (#13)
+                // Cap Dynamic Type app-wide (template pattern; #35). #14 owns
+                // raising the cap for the accessibility (AX) sizes.
+                .dynamicTypeSize(...AppConfig.dynamicSizeMax)
                 .onDisappear {
                     // Save on close/background.
                     gameSession.saveGame()

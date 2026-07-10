@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //
 //  Template file created by Elizabeth Maiser, Fast Five Products LLC, on 7/4/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
 //
 //  Template v0.3.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -29,6 +29,10 @@ struct SettingsView: View {
     @State private var showingResetPlayersAlert = false
     @State private var showingResetSettingsAlert = false
     @State private var showingDeleteAllPlayersAlert = false
+
+    // Owned by MainTabView (#35): the player-reset actions land back on the
+    // Players tab, where their outcome is visible. Reset Settings stays here.
+    @Binding var selectedTab: Tab
 
     var showTitle: Bool = false
 
@@ -89,6 +93,7 @@ struct SettingsView: View {
                 .alert("Reset Players?", isPresented: $showingResetPlayersAlert) {
                     Button("Reset", role: .destructive) {
                         resetPlayers()
+                        selectedTab = .home
                     }
                     Button("Cancel", role: .cancel) { }
                 } message: {
@@ -99,6 +104,7 @@ struct SettingsView: View {
                         withAnimation {
                             gameSession.deleteAllPlayers()
                         }
+                        selectedTab = .home
                     }
                     Button("Cancel", role: .cancel) { }
                 } message: {
@@ -167,7 +173,7 @@ struct SettingsView: View {
 #if DEBUG
 #Preview {
     let sampleGameSession = GameSession()
-    SettingsView(showTitle: true)
+    SettingsView(selectedTab: .constant(.settings), showTitle: true)
         .environmentObject(sampleGameSession)
         .environmentObject(sampleGameSession.settings)
 }

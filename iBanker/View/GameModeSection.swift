@@ -2,7 +2,7 @@
 //  GameModeSection.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -24,6 +24,15 @@ struct GameModeSection: View {
     @EnvironmentObject private var settings: SettingsStore
     // For logging a mode change to the Activity Log (see the picker binding).
     @EnvironmentObject private var gameSession: GameSession
+
+    // Keyboard focus (#35): the custom-mode number pads dismiss via the shared
+    // keyboardDoneToolbar. Owned here so both hosts (Settings tab and the
+    // empty-state Game Mode sheet) get it; neither hosts other text fields,
+    // so there's no toolbar collision.
+    private enum Field {
+        case balance, salary
+    }
+    @FocusState private var focusedField: Field?
 
     var body: some View {
         Section("Game Mode Defaults") {
@@ -55,6 +64,7 @@ struct GameModeSection: View {
                         .keyboardType(.numberPad)
                         .autocorrectionDisabled()
                         .multilineTextAlignment(.trailing)
+                        .focused($focusedField, equals: .balance)
                 }
 
                 HStack {
@@ -64,6 +74,7 @@ struct GameModeSection: View {
                         .keyboardType(.numberPad)
                         .autocorrectionDisabled()
                         .multilineTextAlignment(.trailing)
+                        .focused($focusedField, equals: .salary)
                 }
             } else {
                 // Display the default values for the selected non-custom mode
@@ -88,6 +99,7 @@ struct GameModeSection: View {
             // above, not here.)
             settings.enabledSpinner = settings.selectedGameMode.defaultSpinnerOn
         }
+        .keyboardDoneToolbar(focus: $focusedField)
     }
 }
 

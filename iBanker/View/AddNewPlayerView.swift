@@ -2,7 +2,7 @@
 //  AddNewPlayerView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -26,8 +26,15 @@ struct AddNewPlayerView: View {
     // @State properties to hold the input values from the form.
     @State private var playerName: String = ""
     @State private var playerToken: String = ""
-    @State private var playerBalance: Double? = nil
+    @State private var playerBalance: Int? = nil
     @State private var playerSalary: Int? = nil
+
+    // Keyboard focus (#35): Return advances Name → Token; the numeric fields
+    // dismiss via the shared keyboardDoneToolbar.
+    private enum Field {
+        case name, token, balance, salary
+    }
+    @FocusState private var focusedField: Field?
 
     // Player photo capture (#20) — flow provided by .playerPhotoPicker
     @State private var playerImageData: Data? = nil
@@ -56,6 +63,9 @@ struct AddNewPlayerView: View {
                         TextField("Player Name", text: $playerName)
                             .autocorrectionDisabled() // Disable autocorrection for names
                             .textInputAutocapitalization(.words) // Capitalize first letter of each word
+                            .focused($focusedField, equals: .name)
+                            .submitLabel(.next)
+                            .onSubmit { focusedField = .token }
                     }
 
                     HStack{
@@ -63,6 +73,9 @@ struct AddNewPlayerView: View {
                         TextField("Player Token", text: $playerToken)
                             .autocorrectionDisabled() // Disable autocorrection for names
                             .textInputAutocapitalization(.words) // Capitalize first letter of each word
+                            .focused($focusedField, equals: .token)
+                            .submitLabel(.done)
+                            .onSubmit { focusedField = nil }
                     }
 
                     HStack {
@@ -84,18 +97,20 @@ struct AddNewPlayerView: View {
                         HStack(spacing: 0) {
                             Text("$")
                             TextField("Initial Balance", value: $playerBalance, formatter: integerFormatter)
-                                .keyboardType(.decimalPad)
+                                .keyboardType(.numberPad)
                                 .autocorrectionDisabled()
+                                .focused($focusedField, equals: .balance)
                         }
                     }
-                    
+
                     HStack {
                         Text("Salary:")
                         HStack(spacing: 0) {
                             Text("$")
                             TextField("Initial Salary", value: $playerSalary, formatter: integerFormatter)
-                                .keyboardType(.numberPad) // Show number pad for balance input
+                                .keyboardType(.numberPad)
                                 .autocorrectionDisabled()
+                                .focused($focusedField, equals: .salary)
                         }
                     }
                 }
@@ -105,7 +120,7 @@ struct AddNewPlayerView: View {
                         // Parse, defaulting to 0. Clamp to >= 0 so an accidental
                         // negative (e.g. an iPad hardware-keyboard minus) can't seed a
                         // negative starting balance — .createPlayer (#32) isn't guarded.
-                        let finalBalance = max(0, Int(playerBalance ?? 0.0))
+                        let finalBalance = max(0, playerBalance ?? 0)
                         let finalSalary = max(0, playerSalary ?? 0)
 
                         let newPlayer = Player(id: UUID().uuidString,
@@ -145,11 +160,12 @@ struct AddNewPlayerView: View {
             .playerPhotoPicker(isPresented: $showingPhotoDialog,
                                imageData: $playerImageData,
                                isLoading: $isLoadingPhoto)
+            .keyboardDoneToolbar(focus: $focusedField)
             .onAppear {
                 // Set default values from the shared settings when the view appears (#13)
                 if playerName.isEmpty { // Only set defaults if player name is empty (new player)
                     if playerBalance == nil {
-                        self.playerBalance = Double(settings.effectiveDefaultBalance)
+                        self.playerBalance = settings.effectiveDefaultBalance
                     }
                     if playerSalary == nil {
                         self.playerSalary = settings.effectiveDefaultSalary

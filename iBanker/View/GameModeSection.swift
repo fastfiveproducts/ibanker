@@ -2,7 +2,7 @@
 //  GameModeSection.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -25,14 +25,32 @@ struct GameModeSection: View {
     // For logging a mode change to the Activity Log (see the picker binding).
     @EnvironmentObject private var gameSession: GameSession
 
-    // Keyboard focus (#35): the custom-mode number pads dismiss via the shared
-    // keyboardDoneToolbar. Owned here so both hosts (Settings tab and the
-    // empty-state Game Mode sheet) get it; neither hosts other text fields,
-    // so there's no toolbar collision.
+    // Keyboard focus (#35, reworked twice in #37): owned here, with the Done
+    // accessory attached to exactly ONE row below — see that comment. Serves
+    // both hosts (Settings tab and the empty-state Game Mode sheet).
     private enum Field {
         case balance, salary
     }
     @FocusState private var focusedField: Field?
+
+    // The custom values are stored as non-optional Ints (0 = unset), but the
+    // fields bind optionals so an unset value shows the placeholder instead
+    // of a stuck "0" — matching every other money field (#37). A deliberate
+    // consequence: a stored 0 displays as empty, which is equivalent here.
+    // (Clear-then-commit redisplays the old value — empty text doesn't parse,
+    // so set(nil) doesn't fire; same as every other money field. Type 0 to unset.)
+    private var customBalanceBinding: Binding<Int?> {
+        Binding(
+            get: { settings.customInitialBalance == 0 ? nil : settings.customInitialBalance },
+            set: { settings.customInitialBalance = $0 ?? 0 }
+        )
+    }
+    private var customSalaryBinding: Binding<Int?> {
+        Binding(
+            get: { settings.customInitialSalary == 0 ? nil : settings.customInitialSalary },
+            set: { settings.customInitialSalary = $0 ?? 0 }
+        )
+    }
 
     var body: some View {
         Section("Game Mode Defaults") {
@@ -60,17 +78,25 @@ struct GameModeSection: View {
                 HStack {
                     Text("Default Balance")
                     Spacer()
-                    TextField("Custom Initial Balance", value: $settings.customInitialBalance, formatter: NumberFormatter())
+                    TextField("Initial Balance", value: customBalanceBinding, formatter: NumberFormatter.integer)
                         .keyboardType(.numberPad)
                         .autocorrectionDisabled()
                         .multilineTextAlignment(.trailing)
                         .focused($focusedField, equals: .balance)
                 }
+                // Done accessory on this ONE row only (#37): in a tab-hosted
+                // Form, keyboard toolbar items reach the keyboard only when
+                // declared inside a list cell (Form-level and mainToolbar
+                // attachments never render — #30's propagation gap), and every
+                // cell's declaration contributes a button simultaneously (the
+                // multiple-Done bug when this sat on the whole Section). One
+                // row = one Done; it shows for either field's keyboard.
+                .keyboardDoneToolbar(focus: $focusedField)
 
                 HStack {
                     Text("Default Salary")
                     Spacer()
-                    TextField("Custom Initial Salary", value: $settings.customInitialSalary, formatter: NumberFormatter())
+                    TextField("Initial Salary", value: customSalaryBinding, formatter: NumberFormatter.integer)
                         .keyboardType(.numberPad)
                         .autocorrectionDisabled()
                         .multilineTextAlignment(.trailing)
@@ -99,7 +125,6 @@ struct GameModeSection: View {
             // above, not here.)
             settings.enabledSpinner = settings.selectedGameMode.defaultSpinnerOn
         }
-        .keyboardDoneToolbar(focus: $focusedField)
     }
 }
 

@@ -2,7 +2,7 @@
 //  GameStateReducer.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/23/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -16,8 +16,11 @@
 
 
 import Foundation
-class GameStateReducer {
-    
+
+// Caseless enum: a pure namespace for the reducer function, matching
+// PlayerImageMaker (not instantiable, nothing to subclass).
+enum GameStateReducer {
+
     static func reduce(players: [Player], transactions: [GameTransaction]) -> GameState {
         // 1. Initialize the starting state
         var currentGameState = GameState(playerBalances: [:], playerSalaries: [:])
@@ -61,9 +64,9 @@ class GameStateReducer {
                 currentPlayerBalance = balance
                 currentPlayerSalary = salary
 
-            case .custom(let description):
-                // Custom actions carry no balance effect; logged only.
-                print("Custom action: \(description) by \(playerID)")
+            case .custom:
+                // Custom actions carry no balance effect.
+                break
             }
 
             // Write back balance and salary.

@@ -1,8 +1,8 @@
 //
-//  PlayerModel.swift
+//  Player.swift — renamed from PlayerModel.swift 7/11/26 (#38 C8)
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //

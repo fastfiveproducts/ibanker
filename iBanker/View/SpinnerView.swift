@@ -2,7 +2,7 @@
 //  SpinnerView.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -32,7 +32,7 @@ private let spinnerRestingRows = ["?", "??", "???", "??", "?"]
 private let spinnerRestingIndex = spinnerPrizes.count * 5 + spinnerRestingRows.count / 2
 
 struct SpinnerView: View {
-    @EnvironmentObject var gameSession: GameSession
+    @EnvironmentObject private var gameSession: GameSession
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -102,7 +102,7 @@ struct SpinnerView: View {
             .navigationTitle("Spin to Win")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
                 }
             }

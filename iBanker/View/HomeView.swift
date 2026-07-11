@@ -4,7 +4,7 @@
 //  Template created by Pete Maiser, July 2024 through May 2025
 //  Split from MenuView ~restored by Pete Maiser, Fast Five Products LLC, on 10/23/25.
 //  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -23,7 +23,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var gameSession: GameSession
+    @EnvironmentObject private var gameSession: GameSession
 
     // Owned by MainTabView's toolbar; this binding lets the empty state present it too.
     @Binding var showingAddPlayerSheet: Bool
@@ -230,7 +230,7 @@ struct HomeView: View {
                     .font(.headline)
                     .accessibilityLabel("Player name: \(player.name)")
 
-                if player.token != "" {
+                if !player.token.isEmpty {
                     Text("Token: \(player.token)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
@@ -241,7 +241,7 @@ struct HomeView: View {
 
             Spacer()
 
-            Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
+            Text("$\((gameSession.currentState.playerBalances[player.id] ?? 0).formatted())")
                 .font(.title2)
                 .fontWeight(.bold)
                 .foregroundColor(

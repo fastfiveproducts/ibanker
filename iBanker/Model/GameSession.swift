@@ -2,7 +2,7 @@
 //  GameSession.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/23/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -19,7 +19,7 @@ import Foundation
 import SwiftUI
 import SwiftData
 
-class GameSession: ObservableObject {
+class GameSession: ObservableObject, DebugPrintable {
     @AppStorage("gamePlayers") private var playersData: Data = Data()
     @AppStorage("gameTransactions") private var transactionsData: Data = Data()
     
@@ -59,14 +59,14 @@ class GameSession: ObservableObject {
     }
     
     func saveGame() {
-        if let encodedPlayers = try? JSONEncoder().encode(self.players) {
-            self.playersData = encodedPlayers
-            print("Players saved successfully!")
+        if let encodedPlayers = try? JSONEncoder().encode(players) {
+            playersData = encodedPlayers
+            debugprint("Players saved successfully!")
         }
-        
-        if let encodedTransactions = try? JSONEncoder().encode(self.transactions) {
-            self.transactionsData = encodedTransactions
-            print("Transactions saved successfully!")
+
+        if let encodedTransactions = try? JSONEncoder().encode(transactions) {
+            transactionsData = encodedTransactions
+            debugprint("Transactions saved successfully!")
         }
     }
     
@@ -74,20 +74,24 @@ class GameSession: ObservableObject {
     // when present, replaces the generated Activity Log sentence (e.g. the
     // spinner's "won the spin!" line).
     func perform(_ action: GameAction, by playerID: String, note: String? = nil) {
-        // No-op actions do nothing — no transaction, no Activity Log entry,
-        // no sound. Money movement with no dollars (tapping Add/Subtract/Send —
-        // or Collect Salary in a $0-salary mode — with an empty or $0 amount
-        // was creating noisy zero-dollar transactions), and salary updates
-        // matching the stored salary (PlayerView re-commits the seeded value
-        // on every visit, #36 — pure event-log growth, replayed on every
-        // currentState access).
+        // Invalid and no-op actions do nothing — no transaction, no Activity
+        // Log entry, no sound. Money movement with no dollars was creating
+        // noisy zero-dollar transactions; a self-pay would replay as a lost
+        // amount (#38 B2, unreachable from the UI); a negative salary — e.g.
+        // a hardware-keyboard minus past the number pad (#38 E2) — would
+        // persist invisibly (updateSalary is never logged); and salary
+        // updates matching the stored salary (PlayerView re-commits the
+        // seeded value on every visit, #36) were pure event-log growth.
         let stateBefore = currentState
         switch action {
         case .addMoney(let amount), .subtractMoney(let amount),
-             .collectSalary(let amount), .payPlayer(_, let amount):
+             .collectSalary(let amount):
             guard amount > 0 else { return }
+        case .payPlayer(let recipientID, let amount):
+            guard amount > 0, recipientID != playerID else { return }
         case .updateSalary(let newSalary):
-            guard stateBefore.playerSalaries[playerID] != newSalary else { return }
+            guard newSalary >= 0,
+                  stateBefore.playerSalaries[playerID] != newSalary else { return }
         case .resetPlayer, .createPlayer, .custom:
             break
         }
@@ -163,19 +167,19 @@ class GameSession: ObservableObject {
         let name = playerName(for: playerID)
         switch action {
         case .collectSalary(let amount):
-            return "\(name) collected $\(amount) salary."
+            return "\(name) collected $\(amount.formatted()) salary."
         case .payPlayer(let recipientID, let amount):
-            return "\(name) sent $\(amount) to \(playerName(for: recipientID))."
+            return "\(name) sent $\(amount.formatted()) to \(playerName(for: recipientID))."
         case .addMoney(let amount):
-            return "\(name) added $\(amount)."
+            return "\(name) added $\(amount.formatted())."
         case .subtractMoney(let amount):
-            return "\(name) subtracted $\(amount)."
+            return "\(name) subtracted $\(amount.formatted())."
         case .resetPlayer(let balance, let salary):
-            return "\(name) was reset to $\(balance) and $\(salary) salary."
+            return "\(name) was reset to $\(balance.formatted()) and $\(salary.formatted()) salary."
         case .createPlayer(let balance, let salary):
             return salary > 0
-                ? "\(name) joined the game with $\(balance) and a $\(salary) salary."
-                : "\(name) joined the game with $\(balance)."
+                ? "\(name) joined the game with $\(balance.formatted()) and a $\(salary.formatted()) salary."
+                : "\(name) joined the game with $\(balance.formatted())."
         case .updateSalary:
             return nil
         case .custom(let description):
@@ -217,8 +221,13 @@ class GameSession: ObservableObject {
     /// Reset every player to the given defaults. Clears the transaction log and
     /// re-seeds each player, so a reset is a genuine fresh start (and a natural
     /// compaction point) — safe because every balance is being reset anyway. The
-    /// Activity Log keeps the per-player reset entries.
+    /// Activity Log keeps the per-player reset entries. Inputs are clamped to
+    /// >= 0 (#38 E1): Custom-mode defaults accept a hardware-keyboard/paste
+    /// negative, and a negative reset lands AFTER the log is cleared — no way
+    /// back. Same guard AddNewPlayerView applies at Save.
     func resetPlayers(balance: Int, salary: Int) {
+        let balance = max(0, balance)
+        let salary = max(0, salary)
         transactions.removeAll()
         for player in players {
             perform(.resetPlayer(balance: balance, salary: salary), by: player.id)

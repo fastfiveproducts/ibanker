@@ -2,7 +2,7 @@
 //  GameModeSection.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -128,13 +128,13 @@ struct GameModeSection: View {
                 HStack {
                     Text("Default Balance")
                     Spacer()
-                    Text("$\(settings.effectiveDefaultBalance)")
+                    Text("$\(settings.effectiveDefaultBalance.formatted())")
                         .foregroundColor(.secondary)
                 }
                 HStack {
                     Text("Default Salary")
                     Spacer()
-                    Text("$\(settings.effectiveDefaultSalary)")
+                    Text("$\(settings.effectiveDefaultSalary.formatted())")
                         .foregroundColor(.secondary)
                 }
             }

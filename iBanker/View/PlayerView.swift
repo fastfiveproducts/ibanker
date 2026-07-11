@@ -2,7 +2,7 @@
 //  PlayerView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -17,8 +17,8 @@
 import SwiftUI
 
 struct PlayerView: View {
-    @EnvironmentObject var gameSession: GameSession
-    
+    @EnvironmentObject private var gameSession: GameSession
+
     let player: Player
     let playerIndex: Int
     
@@ -56,13 +56,17 @@ struct PlayerView: View {
     }
 
     private var salaryAmount: Int {
-        Int(salaryInput ?? 0)    }
+        salaryInput ?? 0
+    }
     private var addAmount: Int {
-        Int(addInput ?? 0)    }
+        addInput ?? 0
+    }
     private var subtractAmount: Int {
-        Int(subtractInput ?? 0)    }
+        subtractInput ?? 0
+    }
     private var sendAmount: Int {
-        Int(sendInput ?? 0)    }
+        sendInput ?? 0
+    }
     
     var body: some View {
         VStack {
@@ -107,7 +111,7 @@ struct PlayerView: View {
 
                             Spacer()
 
-                            Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
+                            Text("$\((gameSession.currentState.playerBalances[player.id] ?? 0).formatted())")
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .foregroundColor(
@@ -131,7 +135,7 @@ struct PlayerView: View {
                 }
                 
                 Section {
-                    Button("Collect $\(salaryAmount) Salary") {
+                    Button("Collect $\(salaryAmount.formatted()) Salary") {
                         focusedField = nil
                         gameSession.perform(.collectSalary(amount: salaryAmount), by: player.id)
                     }
@@ -165,7 +169,7 @@ struct PlayerView: View {
                             Menu {
                                 ForEach(gameSession.players.filter { $0.id != player.id }) { otherPlayer in
                                     Button(action: {
-                                        self.selectedPlayer = otherPlayer
+                                        selectedPlayer = otherPlayer
                                         focusedField = .send
                                     }) {
                                         Text(otherPlayer.name)
@@ -235,8 +239,9 @@ struct PlayerView: View {
                            imageData: photoBinding,
                            isLoading: $isLoadingPhoto)
         .onAppear {
-            // Seed the salary field from the stored salary.
-            let currentSalary = gameSession.currentState.playerSalaries[player.id] ?? 200
+            // Seed the salary field from the stored salary (the reducer seeds
+            // every roster player, so the 0 fallback is unreachable here).
+            let currentSalary = gameSession.currentState.playerSalaries[player.id] ?? 0
             salaryInput = currentSalary
         }
         .onChange(of: salaryInput) {
@@ -249,48 +254,46 @@ struct PlayerView: View {
 
 #if DEBUG
 #Preview("Player #1") {
-        // GameSession is a class; build it outside the ViewBuilder scope, mutate in onAppear.
-        let previewGameSession = GameSession()
+    // GameSession is a class; build it outside the ViewBuilder scope, mutate in onAppear.
+    let previewGameSession = GameSession()
 
-        let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "car", isLocalOnly: true, salary: 200)
-        let playerBob = Player(id: UUID().uuidString, name: "Bob", token: "top.hat.fill", isLocalOnly: true, salary: 200)
+    let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "car", isLocalOnly: true, salary: 200)
+    let playerBob = Player(id: UUID().uuidString, name: "Bob", token: "top.hat.fill", isLocalOnly: true, salary: 200)
 
-        NavigationView {
-            PlayerView(player: playerAlice, playerIndex: 1)
-                .environmentObject(previewGameSession)
-                .onAppear {
-                    // MARK: - Perform Data Setup INSIDE onAppear
-                    previewGameSession.players.append(playerAlice)
-                    previewGameSession.players.append(playerBob)
+    NavigationStack {
+        PlayerView(player: playerAlice, playerIndex: 1)
+            .environmentObject(previewGameSession)
+            .onAppear {
+                previewGameSession.players.append(playerAlice)
+                previewGameSession.players.append(playerBob)
 
-                    previewGameSession.perform(.addMoney(amount: 1500), by: playerAlice.id)
-                    previewGameSession.perform(.payPlayer(playerAlice.id, amount: 200), by: playerBob.id)
-                    previewGameSession.perform(.subtractMoney(amount: 2000), by: playerAlice.id)
-                    previewGameSession.perform(.collectSalary(amount: 200), by: playerBob.id)
-                }
-        }
+                previewGameSession.perform(.addMoney(amount: 1500), by: playerAlice.id)
+                previewGameSession.perform(.payPlayer(playerAlice.id, amount: 200), by: playerBob.id)
+                previewGameSession.perform(.subtractMoney(amount: 2000), by: playerAlice.id)
+                previewGameSession.perform(.collectSalary(amount: 200), by: playerBob.id)
+            }
+    }
 }
 
 #Preview("Player #2") {
-        // GameSession is a class; build it outside the ViewBuilder scope, mutate in onAppear.
-        let previewGameSession = GameSession()
+    // GameSession is a class; build it outside the ViewBuilder scope, mutate in onAppear.
+    let previewGameSession = GameSession()
 
-        let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "red", isLocalOnly: true, salary: 200)
-        let playerBob = Player(id: UUID().uuidString, name: "Bob", token: "green", isLocalOnly: true, salary: 200)
+    let playerAlice = Player(id: UUID().uuidString, name: "Alice", token: "red", isLocalOnly: true, salary: 200)
+    let playerBob = Player(id: UUID().uuidString, name: "Bob", token: "green", isLocalOnly: true, salary: 200)
 
-        NavigationView {
-            PlayerView(player: playerBob, playerIndex: 2)
-                .environmentObject(previewGameSession)
-                .onAppear {
-                    // MARK: - Perform Data Setup INSIDE onAppear
-                    previewGameSession.players.append(playerAlice)
-                    previewGameSession.players.append(playerBob)
+    NavigationStack {
+        PlayerView(player: playerBob, playerIndex: 2)
+            .environmentObject(previewGameSession)
+            .onAppear {
+                previewGameSession.players.append(playerAlice)
+                previewGameSession.players.append(playerBob)
 
-                    previewGameSession.perform(.addMoney(amount: 1500), by: playerAlice.id)
-                    previewGameSession.perform(.payPlayer(playerAlice.id, amount: 200), by: playerBob.id)
-                    previewGameSession.perform(.subtractMoney(amount: 2000), by: playerAlice.id)
-                    previewGameSession.perform(.collectSalary(amount: 200), by: playerBob.id)
-                }
-        }
+                previewGameSession.perform(.addMoney(amount: 1500), by: playerAlice.id)
+                previewGameSession.perform(.payPlayer(playerAlice.id, amount: 200), by: playerBob.id)
+                previewGameSession.perform(.subtractMoney(amount: 2000), by: playerAlice.id)
+                previewGameSession.perform(.collectSalary(amount: 200), by: playerBob.id)
+            }
+    }
 }
 #endif

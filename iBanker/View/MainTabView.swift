@@ -4,8 +4,9 @@
 //  Template created by Pete Maiser, July 2024 through May 2025
 //  Renamed from HomeView by Pete Maiser, Fast Five Products LLC, on 10/23/25.
 //  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
-//      Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
+//
+//  Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //

@@ -28,9 +28,10 @@ struct PlayerView: View {
     @State private var sendInput: Int? = nil
     @State private var selectedPlayer: Player? = nil
 
-    // Keyboard focus (#35): the number pad has no Return key, so the shared
-    // keyboardDoneToolbar dismisses it, and the action buttons clear focus
-    // so the keyboard hides once an amount is applied.
+    // Keyboard focus (#35; actions moved onto the shared bar in #42): the
+    // number pad has no Return key, so the keyboardActionBar (attached
+    // below the Form) carries each field's action — one tap applies and
+    // dismisses; Cancel discards.
     private enum Field {
         case salary, add, subtract, send
     }
@@ -145,17 +146,6 @@ struct PlayerView: View {
                             .autocorrectionDisabled(true)
                             .multilineTextAlignment(.trailing)
                             .focused($focusedField, equals: .add)
-                        Button {
-                            // Resign focus before clearing, so an end-editing
-                            // re-commit of the field text can't resurrect the amount.
-                            focusedField = nil
-                            gameSession.perform(.addMoney(amount: addAmount), by: player.id)
-                            addInput = nil
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.title)
-                                .foregroundColor(.green)
-                        }
                     }
                     HStack {
                         Text("Subtract $:")
@@ -165,33 +155,18 @@ struct PlayerView: View {
                             .autocorrectionDisabled(true)
                             .multilineTextAlignment(.trailing)
                             .focused($focusedField, equals: .subtract)
-                        Button {
-                            focusedField = nil
-                            gameSession.perform(.subtractMoney(amount: subtractAmount), by: player.id)
-                            subtractInput = nil
-                        } label: {
-                            Image(systemName: "minus.circle.fill")
-                                .font(.title)
-                                .foregroundColor(.red)
-                        }
                     }
+                    // Player-first send (#42): pick the recipient, focus jumps
+                    // to the amount, and the bar's Send completes it.
                     VStack {
                         HStack {
-                            Text("Send Amount:")
-                            Spacer()
-                            TextField("Enter Amount", value: $sendInput, formatter: NumberFormatter.integer)
-                                .keyboardType(.numberPad)
-                                .autocorrectionDisabled(true)
-                                .multilineTextAlignment(.trailing)
-                                .focused($focusedField, equals: .send)
-                        }
-                        HStack {
-                            Text("to player:")
+                            Text("Send To:")
                             Spacer()
                             Menu {
                                 ForEach(gameSession.players.filter { $0.id != player.id }) { otherPlayer in
                                     Button(action: {
                                         self.selectedPlayer = otherPlayer
+                                        focusedField = .send
                                     }) {
                                         Text(otherPlayer.name)
                                     }
@@ -200,23 +175,54 @@ struct PlayerView: View {
                                 Label(selectedPlayer?.name ?? "Select Player", systemImage: "chevron.down.circle.fill")
                             }
                             .buttonStyle(.bordered)
-                            Button {
-                                if let selectedPlayer = selectedPlayer {
-                                    focusedField = nil
-                                    gameSession.perform(.payPlayer(selectedPlayer.id, amount: sendAmount), by: player.id)
-                                    sendInput = nil
-                                }
-                            } label: {
-                                Image(systemName: "arrow.up.circle.fill")
-                                    .font(.title)
-                                    .foregroundColor(selectedPlayer == nil ? .gray : .blue)
-                            }
-                            .disabled(selectedPlayer == nil)
                         }
+                        // No visible label — the placeholder carries it; the row
+                        // reads as the amount for the pick above. VoiceOver
+                        // still gets a distinct name (the visible label this
+                        // replaced).
+                        TextField("Enter Amount", value: $sendInput, formatter: NumberFormatter.integer)
+                            .keyboardType(.numberPad)
+                            .autocorrectionDisabled(true)
+                            .multilineTextAlignment(.trailing)
+                            .focused($focusedField, equals: .send)
+                            .accessibilityLabel("Send amount")
                     }
                 }
             }
-            .keyboardDoneToolbar(focus: $focusedField)
+            .keyboardActionBar(focus: $focusedField) { field in
+                switch field {
+                case .salary:
+                    .done   // live-syncs via onChange below; nothing to apply
+                case .add:
+                    KeyboardAction(label: "Add",
+                                   tint: .green,
+                                   cancel: { addInput = nil },
+                                   apply: {
+                                       gameSession.perform(.addMoney(amount: addAmount), by: player.id)
+                                       addInput = nil
+                                   })
+                case .subtract:
+                    KeyboardAction(label: "Subtract",
+                                   tint: .red,
+                                   cancel: { subtractInput = nil },
+                                   apply: {
+                                       gameSession.perform(.subtractMoney(amount: subtractAmount), by: player.id)
+                                       subtractInput = nil
+                                   })
+                case .send:
+                    KeyboardAction(label: "Send",
+                                   isEnabled: selectedPlayer != nil,
+                                   cancel: { sendInput = nil },
+                                   apply: {
+                                       if let recipient = selectedPlayer {
+                                           gameSession.perform(.payPlayer(recipient.id, amount: sendAmount), by: player.id)
+                                           sendInput = nil
+                                           // Fresh pick for the next send (owner gate feedback)
+                                           selectedPlayer = nil
+                                       }
+                                   })
+                }
+            }
             .scrollDismissesKeyboard(.interactively)
             
             Spacer()

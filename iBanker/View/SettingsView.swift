@@ -57,8 +57,8 @@ struct SettingsView: View {
                     Toggle("Spin-to-Win Spinner", isOn: $settings.enabledSpinner)
                 }
                 // Shared with the empty-state "Game Mode" sheet (#31); the
-                // mode → spinner reset (and the custom fields' keyboard Done
-                // accessory, #37) live inside GameModeSection.
+                // mode → spinner reset (and the custom fields' Done/Cancel
+                // bar publication, #37/#42) live inside GameModeSection.
                 GameModeSection()
                 // Destructive-settings section (#28, extended #30), mirroring
                 // iOS Settings > General > Reset: red buttons, each confirmed,
@@ -114,6 +114,12 @@ struct SettingsView: View {
 
                 aboutSection
             }
+            // Renders the Done/Cancel bar GameModeSection publishes for its
+            // custom fields (#42) — a Section can't pin a bottom bar itself.
+            .keyboardActionBarHost()
+            // Stuck-guard (#42): belt-and-braces dismissal path — a drag
+            // always dismisses the keyboard.
+            .scrollDismissesKeyboard(.interactively)
         }
         .padding()
         .background(Color(.systemGroupedBackground))

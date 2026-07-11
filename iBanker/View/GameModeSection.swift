@@ -46,8 +46,9 @@ struct GameModeSection: View {
     // fields bind optionals so an unset value shows the placeholder instead
     // of a stuck "0" — matching every other money field (#37). A deliberate
     // consequence: a stored 0 displays as empty, which is equivalent here.
-    // (Clear-then-commit redisplays the old value — empty text doesn't parse,
-    // so set(nil) doesn't fire; same as every other money field. Type 0 to unset.)
+    // (Clearing a field to empty commits nil and unsets it — device-verified
+    // at the #42 gate, superseding an earlier note here that claimed the old
+    // value redisplayed and 0 had to be typed to unset.)
     private var customBalanceBinding: Binding<Int?> {
         Binding(
             get: { settings.customInitialBalance == 0 ? nil : settings.customInitialBalance },
@@ -148,7 +149,7 @@ struct GameModeSection: View {
             }
         }
         .onChange(of: settings.selectedGameMode) {
-            // Reset the spinner to the mode's default (v1.3.0) on ANY mode change,
+            // Reset the spinner to the mode's default on ANY mode change,
             // including programmatic ones like Reset Settings; the Preferences
             // toggle stays a manual override. (Logging lives on the picker binding
             // above, not here.)

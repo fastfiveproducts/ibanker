@@ -28,19 +28,19 @@ struct PlayerView: View {
     @State private var sendInput: Int? = nil
     @State private var selectedPlayer: Player? = nil
 
-    // Keyboard focus (#35; actions moved onto the shared bar in #42): the
-    // number pad has no Return key, so the keyboardActionBar (attached
-    // below the Form) carries each field's action — one tap applies and
-    // dismisses; Cancel discards.
+    /// Keyboard focus (#35; actions moved onto the shared bar in #42): the
+    /// number pad has no Return key, so the keyboardActionBar (attached
+    /// below the Form) carries each field's action — one tap applies and
+    /// dismisses; Cancel discards.
     private enum Field {
         case salary, add, subtract, send
     }
     @FocusState private var focusedField: Field?
 
-    // Change/add/remove the player's photo (#20 follow-up; v1.3.0 allowed
-    // this from the detail screen). `player` is a by-value copy, so the
-    // photo binding reads and writes the live player in gameSession.players
-    // — the single source of truth for player identity.
+    // Change/add/remove the player's photo (#20 follow-up). `player` is a
+    // by-value copy, so the photo binding reads and writes the live player
+    // in gameSession.players — the single source of truth for player
+    // identity.
     @State private var showingPhotoDialog = false
     @State private var isLoadingPhoto = false
 

@@ -2,7 +2,7 @@
 //  SettingsStore.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/5/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -24,8 +24,8 @@ private let soundEffectsKey = "soundEffects"
 class SettingsStore: ObservableObject {
     @AppStorage(soundEffectsKey) var soundEffects = true
 
-    // For callers outside the SwiftUI environment (e.g. SoundPlayer) that need
-    // the latest value at play time.
+    /// For callers outside the SwiftUI environment (e.g. SoundPlayer) that need
+    /// the latest value at play time.
     static var soundEffectsEnabled: Bool {
         UserDefaults.standard.object(forKey: soundEffectsKey) as? Bool ?? true
     }
@@ -35,8 +35,8 @@ class SettingsStore: ObservableObject {
     @AppStorage("customInitialBalance") var customInitialBalance: Int = 0
     @AppStorage("customInitialSalary") var customInitialSalary: Int = 0
 
-    // Spin-to-Win spinner (#21): follows the mode default when the mode
-    // changes (see SettingsView), with a manual override Toggle in Settings.
+    /// Spin-to-Win spinner (#21): follows the mode default when the mode
+    /// changes (see SettingsView), with a manual override Toggle in Settings.
     @AppStorage("enabledSpinner") var enabledSpinner = false
 
     var effectiveDefaultBalance: Int {

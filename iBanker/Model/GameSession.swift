@@ -2,7 +2,7 @@
 //  GameSession.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/23/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -26,12 +26,10 @@ class GameSession: ObservableObject {
     @Published var players: [Player]
     @Published var transactions: [GameTransaction]
     
-    // Add a direct reference to SettingsStore
-    // You could also initialize it here, or inject it from your App struct.
-    // For simplicity, let's assume a single, shared instance is acceptable for now.
-    // If you plan to have multiple GameSessions (e.g., different saved games),
-    // you might want to pass SettingsStore as an initializer parameter.
-    var settings: SettingsStore = SettingsStore() // Create or get your shared settings instance
+    /// The single shared SettingsStore (#13): created here and injected into
+    /// the environment by iBankerApp, so session logic and views read the same
+    /// instance. Previews may swap in their own.
+    var settings: SettingsStore = SettingsStore()
 
     // SwiftData context for the Activity Log, injected from the view layer (see
     // MainTabView). Optional because GameSession is created before the SwiftData
@@ -42,16 +40,15 @@ class GameSession: ObservableObject {
         GameStateReducer.reduce(players: players, transactions: transactions)
     }
     
-    @Published var currentPlayerID: String? // switch with tap in pass-the-phone mode (Future)
-        
-    // Future: this can map to Google Sheet or Firebase session
+    @Published var currentPlayerID: String? // Future: pass-the-phone mode
+
+    // Future: synced/cloud game sessions
     var gameSessionID: String?
     var isSyncedGame: Bool { gameSessionID != nil }
     
     init() {
-        // Phase 1: Initialize all stored properties with a default value.
-        // We MUST NOT use 'self' here. We use direct access to UserDefaults.
-        // This is a special exception to the two-phase initialization rule.
+        // Two-phase init: 'self' (and thus the @AppStorage properties) isn't
+        // available yet, so decode via direct UserDefaults access.
         
         let initialPlayers = (try? JSONDecoder().decode([Player].self, from: UserDefaults.standard.data(forKey: "gamePlayers") ?? Data())) ?? []
         
@@ -77,19 +74,25 @@ class GameSession: ObservableObject {
     // when present, replaces the generated Activity Log sentence (e.g. the
     // spinner's "won the spin!" line).
     func perform(_ action: GameAction, by playerID: String, note: String? = nil) {
-        // Money-movement actions with no dollars do nothing — no transaction,
-        // no Activity Log entry, no sound. (Tapping Add/Subtract/Send — or
-        // Collect Salary in a $0-salary mode — with an empty or $0 amount was
-        // creating noisy zero-dollar transactions.)
+        // No-op actions do nothing — no transaction, no Activity Log entry,
+        // no sound. Money movement with no dollars (tapping Add/Subtract/Send —
+        // or Collect Salary in a $0-salary mode — with an empty or $0 amount
+        // was creating noisy zero-dollar transactions), and salary updates
+        // matching the stored salary (PlayerView re-commits the seeded value
+        // on every visit, #36 — pure event-log growth, replayed on every
+        // currentState access).
+        let stateBefore = currentState
         switch action {
         case .addMoney(let amount), .subtractMoney(let amount),
              .collectSalary(let amount), .payPlayer(_, let amount):
             guard amount > 0 else { return }
-        case .updateSalary, .resetPlayer, .createPlayer, .custom:
+        case .updateSalary(let newSalary):
+            guard stateBefore.playerSalaries[playerID] != newSalary else { return }
+        case .resetPlayer, .createPlayer, .custom:
             break
         }
 
-        let balanceBefore = currentState.playerBalances[playerID] ?? 0
+        let balanceBefore = stateBefore.playerBalances[playerID] ?? 0
         let tx = GameTransaction(
             id: UUID().uuidString,
             timestamp: Date(),
@@ -126,7 +129,7 @@ class GameSession: ObservableObject {
 
         // When a money-out action takes the acting player's balance from
         // non-negative to negative, follow with the sad sound (queued so it
-        // plays after the action's own sound, matching v1.3.0).
+        // plays after the action's own sound).
         switch action {
         case .subtractMoney, .payPlayer:
             let balanceAfter = currentState.playerBalances[playerID] ?? 0
@@ -245,15 +248,11 @@ class GameSession: ObservableObject {
         recordActivity("Game mode changed to \(mode.rawValue).")
     }
 
-    /// Example of how you might implement undo (simplistic, real undo is more complex)
+    /// Future: undo — unwired (no callers yet). A real implementation must
+    /// also reconcile the Activity Log, which this does not.
     func undoLastTransaction() {
         if !transactions.isEmpty {
             transactions.removeLast()
         }
     }
-    
-    // MARK: - Persistence (Example - you'd likely use FileManager, UserDefaults, or CloudKit/Firebase)
-    
-    // Example: Save to UserDefaults
-    
 }

@@ -2,7 +2,7 @@
 //  PlayerThumbnailView.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -18,8 +18,7 @@ import SwiftUI
 
 /// The single reusable player-photo thumbnail, shared by HomeView rows,
 /// the PlayerView header, and AddNewPlayerView's photo row: a rounded
-/// square (v1.3.0 style) with an SF-Symbol placeholder when the player has
-/// no photo.
+/// square with an SF-Symbol placeholder when the player has no photo.
 struct PlayerThumbnailView: View {
     let imageData: Data?
     var size: CGFloat = 44

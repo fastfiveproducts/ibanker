@@ -64,9 +64,12 @@ All Swift files carry an FFP AGPL header (standardized for v2.0.0). The project 
 - **Template-derived files** (`wholesale`/`merge` per `template-compare.sh`) carry the **full** header, including the `Template vX.Y.Z — …` alignment line and the `For licensing inquiries, contact: …` line.
 - **App-original files** (the `app-only` category — iBanker's own code with no template counterpart) **omit both** the `Template vX.Y.Z` line and the `For licensing inquiries, contact:` line. They keep the Copyright line and the AGPL + author-exception paragraphs (which still point to `LICENSE-EXCEPTIONS.md`). Deliberate: the `Template` line would misrepresent app-original code as template-derived, and dropping the contact line draws the contrast. `template-compare.sh` matches by filename (not header content), so this does not affect the sync tooling.
 
-Use the FFP AGPL header format documented in `../template/template.ios/CONTRIBUTING.md`, with the app-original exception above:
+Use the FFP AGPL header format documented in `../template/template.ios/CONTRIBUTING.md` (this repo's human-facing digest of these conventions is [CONTRIBUTING.md](./CONTRIBUTING.md), #33), with the app-original exception above:
 - **Modifying** an existing file: maintain a single `Modified by <name>, <date>` line (replace it — never stack a second). For template-derived files, add an "(updated)" suffix to the template version line; never advance the template version number itself.
 - **Creating** a new file: for an **app-original** file use the lighter header (no `Template` or contact line); for a **template-derived** file start with the current template version header. Preserve the layout used across this repo's headers.
+
+### Doc-comment standard
+Symbol documentation (types, functions, properties) uses `///` (renders in Xcode Quick Help); inline explanation and section/group notes use `//` (#33). Scope: app-original files and app-authored regions of merge files. Template-owned content keeps the template's comment style until the standard is adopted upstream — don't restyle it locally.
 
 ### App-Specific MARK convention
 Template "merge" files mark customizable regions with `// MARK: - App-Specific`. Content above the MARK can generally be refreshed from the template; content at/below is app-specific and must be preserved or carefully merged. Treat the MARK as a hint, and always review the full diff.

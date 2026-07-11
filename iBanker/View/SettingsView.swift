@@ -127,7 +127,7 @@ struct SettingsView: View {
     
     private func resetPlayers() {
         gameSession.resetPlayers(balance: settings.effectiveDefaultBalance, salary: settings.effectiveDefaultSalary)
-        // One shake for the whole reset (not per player), matching v1.3.0
+        // One shake for the whole reset (not per player)
         SoundPlayer.shared.playSystemSound(.shake)
     }
 

@@ -130,8 +130,7 @@ extension MainTabView {
 
         ToolbarItem(placement: .topBarTrailing) {
             // Spin-to-Win entry point, shown only when the spinner is
-            // enabled (auto-on for the $400K mode) — mirrors the v1.3.0
-            // conditional toolbar button.
+            // enabled (auto-on for the $400K mode).
             if selectedTabItem == .home && settings.enabledSpinner {
                 Button(action: {
                     showingSpinnerSheet = true

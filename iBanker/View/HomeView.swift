@@ -75,8 +75,7 @@ struct HomeView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
 
-            // Tagline carried forward from the original Objective-C app's
-            // first-launch screen
+            // Tagline carried forward from the original app's first-launch screen
             Text("iBanker takes the place of paper money in board games!")
                 .font(.subheadline)
                 .foregroundColor(.gray)
@@ -220,8 +219,8 @@ struct HomeView: View {
 
     // MARK: - Helper Functions
 
-    // One roster row's content (thumbnail, name/token, balance) — shared by the
-    // navigating row and the Edit-mode row.
+    /// One roster row's content (thumbnail, name/token, balance) — shared by the
+    /// navigating row and the Edit-mode row.
     private func playerRow(_ player: Player) -> some View {
         HStack {
             PlayerThumbnailView(imageData: player.imageData, size: 44)

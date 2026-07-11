@@ -29,8 +29,8 @@ struct AddNewPlayerView: View {
     @State private var playerBalance: Int? = nil
     @State private var playerSalary: Int? = nil
 
-    // Keyboard focus (#35): Return advances Name → Token; the numeric fields
-    // dismiss via the shared keyboardDoneBar.
+    /// Keyboard focus (#35): Return advances Name → Token; the numeric fields
+    /// dismiss via the shared keyboardDoneBar.
     private enum Field {
         case name, token, balance, salary
     }
@@ -144,7 +144,7 @@ struct AddNewPlayerView: View {
                     }
                 }
             }
-            // Photo capture: the shared flow — v1.3.0-style dialog, camera
+            // Photo capture: the shared flow — confirmation dialog, camera
             // (front-facing first) when available, library via PhotosPicker.
             // See PlayerPhotoPicker.swift.
             .playerPhotoPicker(isPresented: $showingPhotoDialog,

@@ -124,7 +124,7 @@ struct PlayerView: View {
 
                             Spacer()
 
-                            TextField("Enter Salary", value: $salaryInput, formatter: NumberFormatter.integer)
+                            TextField("Enter Salary", value: $salaryInput, formatter: NumberFormatter.money)
                                 .font(.title2)
                                 .fontWeight(.bold)
                                 .keyboardType(.numberPad)
@@ -145,7 +145,7 @@ struct PlayerView: View {
                     HStack {
                         Text("Add $:")
                         Spacer()
-                        TextField("Enter Amount", value: $addInput, formatter: NumberFormatter.integer)
+                        TextField("Enter Amount", value: $addInput, formatter: NumberFormatter.money)
                             .keyboardType(.numberPad)
                             .autocorrectionDisabled(true)
                             .multilineTextAlignment(.trailing)
@@ -154,7 +154,7 @@ struct PlayerView: View {
                     HStack {
                         Text("Subtract $:")
                         Spacer()
-                        TextField("Enter Amount", value: $subtractInput, formatter: NumberFormatter.integer)
+                        TextField("Enter Amount", value: $subtractInput, formatter: NumberFormatter.money)
                             .keyboardType(.numberPad)
                             .autocorrectionDisabled(true)
                             .multilineTextAlignment(.trailing)
@@ -184,7 +184,7 @@ struct PlayerView: View {
                         // reads as the amount for the pick above. VoiceOver
                         // still gets a distinct name (the visible label this
                         // replaced).
-                        TextField("Enter Amount", value: $sendInput, formatter: NumberFormatter.integer)
+                        TextField("Enter Amount", value: $sendInput, formatter: NumberFormatter.money)
                             .keyboardType(.numberPad)
                             .autocorrectionDisabled(true)
                             .multilineTextAlignment(.trailing)

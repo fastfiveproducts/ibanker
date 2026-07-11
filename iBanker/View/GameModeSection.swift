@@ -108,7 +108,7 @@ struct GameModeSection: View {
                 HStack {
                     Text("Default Balance")
                     Spacer()
-                    TextField("Initial Balance", value: customBalanceBinding, formatter: NumberFormatter.integer)
+                    TextField("Initial Balance", value: customBalanceBinding, formatter: NumberFormatter.money)
                         .keyboardType(.numberPad)
                         .autocorrectionDisabled()
                         .multilineTextAlignment(.trailing)
@@ -117,7 +117,7 @@ struct GameModeSection: View {
                 HStack {
                     Text("Default Salary")
                     Spacer()
-                    TextField("Initial Salary", value: customSalaryBinding, formatter: NumberFormatter.integer)
+                    TextField("Initial Salary", value: customSalaryBinding, formatter: NumberFormatter.money)
                         .keyboardType(.numberPad)
                         .autocorrectionDisabled()
                         .multilineTextAlignment(.trailing)

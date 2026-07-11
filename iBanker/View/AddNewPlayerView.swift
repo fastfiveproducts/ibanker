@@ -84,24 +84,20 @@ struct AddNewPlayerView: View {
 
                     HStack {
                         Text("Balance:")
-                        HStack(spacing: 0) {
-                            Text("$")
-                            TextField("Initial Balance", value: $playerBalance, formatter: NumberFormatter.integer)
-                                .keyboardType(.numberPad)
-                                .autocorrectionDisabled()
-                                .focused($focusedField, equals: .balance)
-                        }
+                        // The money formatter renders the committed value's $
+                        // itself, replacing the old Text("$") prefix shims.
+                        TextField("Initial Balance", value: $playerBalance, formatter: NumberFormatter.money)
+                            .keyboardType(.numberPad)
+                            .autocorrectionDisabled()
+                            .focused($focusedField, equals: .balance)
                     }
 
                     HStack {
                         Text("Salary:")
-                        HStack(spacing: 0) {
-                            Text("$")
-                            TextField("Initial Salary", value: $playerSalary, formatter: NumberFormatter.integer)
-                                .keyboardType(.numberPad)
-                                .autocorrectionDisabled()
-                                .focused($focusedField, equals: .salary)
-                        }
+                        TextField("Initial Salary", value: $playerSalary, formatter: NumberFormatter.money)
+                            .keyboardType(.numberPad)
+                            .autocorrectionDisabled()
+                            .focused($focusedField, equals: .salary)
                     }
                 }
 

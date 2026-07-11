@@ -241,9 +241,13 @@ struct HomeView: View {
 
             Spacer()
 
+            // Shrink to fit rather than wrap: big-money modes ($15M) at the
+            // largest allowed Dynamic Type size were wrapping mid-number.
             Text("$\((gameSession.currentState.playerBalances[player.id] ?? 0).formatted())")
                 .font(.title2)
                 .fontWeight(.bold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
                 .foregroundColor(
                     (gameSession.currentState.playerBalances[player.id] ?? 0) >= 0 ? .green : .red
                 )

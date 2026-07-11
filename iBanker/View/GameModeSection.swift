@@ -25,13 +25,22 @@ struct GameModeSection: View {
     // For logging a mode change to the Activity Log (see the picker binding).
     @EnvironmentObject private var gameSession: GameSession
 
-    // Keyboard focus (#35, reworked twice in #37): owned here, with the Done
-    // accessory attached to exactly ONE row below — see that comment. Serves
-    // both hosts (Settings tab and the empty-state Game Mode sheet).
+    // Keyboard focus (#35, reworked twice in #37, Done/Cancel bar in #42):
+    // owned here, but a Section can't reach its host's container to pin a
+    // bottom bar — so the section publishes the bar for the focused field
+    // via KeyboardActionBarPreference, and each host Form (SettingsView and
+    // HomeView's Game Mode sheet) renders it with .keyboardActionBarHost().
     private enum Field {
         case balance, salary
     }
     @FocusState private var focusedField: Field?
+
+    // The stored value when a field gained focus — what the bar's Cancel
+    // restores (#42). The fields write through to @AppStorage on
+    // end-editing commit, so Cancel resigns focus (letting that commit fire)
+    // and then puts this snapshot back. One snapshot suffices: only the
+    // focused field can be cancelled, and moving focus re-snapshots.
+    @State private var valueBeforeEditing: Int = 0
 
     // The custom values are stored as non-optional Ints (0 = unset), but the
     // fields bind optionals so an unset value shows the placeholder instead
@@ -50,6 +59,26 @@ struct GameModeSection: View {
             get: { settings.customInitialSalary == 0 ? nil : settings.customInitialSalary },
             set: { settings.customInitialSalary = $0 ?? 0 }
         )
+    }
+
+    // The bar for the focused field: Done commits (write-through, via the
+    // end-editing commit); Cancel restores the snapshot. The id encodes
+    // everything the closures capture (field + snapshot), per the
+    // preference's staleness contract.
+    private var barPreference: KeyboardActionBarPreference? {
+        guard let field = focusedField else { return nil }
+        let action: KeyboardAction
+        switch field {
+        case .balance:
+            action = KeyboardAction(label: "Done",
+                                    cancel: { settings.customInitialBalance = valueBeforeEditing })
+        case .salary:
+            action = KeyboardAction(label: "Done",
+                                    cancel: { settings.customInitialSalary = valueBeforeEditing })
+        }
+        return KeyboardActionBarPreference(id: "\(field)-\(valueBeforeEditing)",
+                                           action: action,
+                                           dismiss: { focusedField = nil })
     }
 
     var body: some View {
@@ -84,15 +113,6 @@ struct GameModeSection: View {
                         .multilineTextAlignment(.trailing)
                         .focused($focusedField, equals: .balance)
                 }
-                // Done accessory on this ONE row only (#37): in a tab-hosted
-                // Form, keyboard toolbar items reach the keyboard only when
-                // declared inside a list cell (Form-level and mainToolbar
-                // attachments never render — #30's propagation gap), and every
-                // cell's declaration contributes a button simultaneously (the
-                // multiple-Done bug when this sat on the whole Section). One
-                // row = one Done; it shows for either field's keyboard.
-                .keyboardDoneToolbar(focus: $focusedField)
-
                 HStack {
                     Text("Default Salary")
                     Spacer()
@@ -118,6 +138,15 @@ struct GameModeSection: View {
                 }
             }
         }
+        .preference(key: KeyboardActionBarPreferenceKey.self, value: barPreference)
+        .onChange(of: focusedField) {
+            // Snapshot the newly-focused field's stored value for Cancel (#42).
+            switch focusedField {
+            case .balance: valueBeforeEditing = settings.customInitialBalance
+            case .salary: valueBeforeEditing = settings.customInitialSalary
+            case nil: break
+            }
+        }
         .onChange(of: settings.selectedGameMode) {
             // Reset the spinner to the mode's default (v1.3.0) on ANY mode change,
             // including programmatic ones like Reset Settings; the Preferences
@@ -136,6 +165,7 @@ struct GameModeSection: View {
     Form {
         GameModeSection()
     }
+    .keyboardActionBarHost()
     .environmentObject(sampleSettings)
     .environmentObject(sampleGameSession)
 }

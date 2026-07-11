@@ -30,7 +30,7 @@ struct AddNewPlayerView: View {
     @State private var playerSalary: Int? = nil
 
     // Keyboard focus (#35): Return advances Name → Token; the numeric fields
-    // dismiss via the shared keyboardDoneToolbar.
+    // dismiss via the shared keyboardDoneBar.
     private enum Field {
         case name, token, balance, salary
     }
@@ -150,7 +150,10 @@ struct AddNewPlayerView: View {
             .playerPhotoPicker(isPresented: $showingPhotoDialog,
                                imageData: $playerImageData,
                                isLoading: $isLoadingPhoto)
-            .keyboardDoneToolbar(focus: $focusedField)
+            .keyboardDoneBar(focus: $focusedField)
+            // Stuck-guard (#42): belt-and-braces dismissal path — a drag
+            // always dismisses the keyboard.
+            .scrollDismissesKeyboard(.interactively)
             .onAppear {
                 // Set default values from the shared settings when the view appears (#13)
                 if playerName.isEmpty { // Only set defaults if player name is empty (new player)

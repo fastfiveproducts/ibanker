@@ -4,7 +4,7 @@
 //  Template created by Pete Maiser, July 2024 through May 2025
 //  Split from MenuView ~restored by Pete Maiser, Fast Five Products LLC, on 10/23/25.
 //  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //
 //  Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -139,6 +139,12 @@ struct HomeView: View {
             Form {
                 GameModeSection()
             }
+            // Renders the Done/Cancel bar GameModeSection publishes for its
+            // custom fields (#42) — a Section can't pin a bottom bar itself.
+            .keyboardActionBarHost()
+            // Stuck-guard (#42): belt-and-braces dismissal path — a drag
+            // always dismisses the keyboard.
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Game Mode")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

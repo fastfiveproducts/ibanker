@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //
 //  Template file created by Elizabeth Maiser, Fast Five Products LLC, on 7/4/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/12/26.
 //
 //  Template v0.3.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -167,7 +167,7 @@ struct SettingsView: View {
         }
     }
 
-    /// "2.0 (1)" — marketing version and build, from the bundle.
+    /// e.g. "2.0.0 (2)" — marketing version and build, from the bundle.
     private static var appVersion: String {
         let info = Bundle.main.infoDictionary
         let version = info?["CFBundleShortVersionString"] as? String ?? "—"

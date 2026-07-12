@@ -2,7 +2,7 @@
 //  SpinnerView.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -23,7 +23,7 @@
 import SwiftUI
 
 // Reel geometry, file-scope so @State defaults can reference it. Matches
-// v1.3.0's wheel: five groups of the four prize values, then a block of
+// the original wheel: five groups of the four prize values, then a block of
 // "resting" placeholder rows the reel parks on before any spin. Spins
 // alternate landing between the second ("top") and fourth ("bottom") prize
 // groups so consecutive spins visibly travel.
@@ -32,7 +32,7 @@ private let spinnerRestingRows = ["?", "??", "???", "??", "?"]
 private let spinnerRestingIndex = spinnerPrizes.count * 5 + spinnerRestingRows.count / 2
 
 struct SpinnerView: View {
-    @EnvironmentObject var gameSession: GameSession
+    @EnvironmentObject private var gameSession: GameSession
     @Environment(\.dismiss) private var dismiss
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -102,7 +102,7 @@ struct SpinnerView: View {
             .navigationTitle("Spin to Win")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }
                 }
             }
@@ -137,9 +137,9 @@ struct SpinnerView: View {
         .accessibilityValue(landedPrize == nil ? "Not spun yet" : "$\(landedPrize!.formatted())")
     }
 
-    // Land on one of the four prizes with uniform odds, alternating between
-    // the top and bottom landing blocks (v1.3.0 behavior). With Reduce
-    // Motion the reel reveals the result directly instead of animating.
+    /// Land on one of the four prizes with uniform odds, alternating between
+    /// the top and bottom landing blocks. With Reduce Motion the reel
+    /// reveals the result directly instead of animating.
     private func spin() {
         let randomPick = Int.random(in: 0..<spinnerPrizes.count)
         let newIndex: Int
@@ -164,15 +164,15 @@ struct SpinnerView: View {
         }
     }
 
-    // Award the prize through the event-sourced session — never mutate
-    // balances directly. The note carries the v1.3.0 win line into the
-    // transaction and the Activity Log.
+    /// Award the prize through the event-sourced session — never mutate
+    /// balances directly. The note carries the original win line into the
+    /// transaction and the Activity Log.
     private func sendPrize() {
         guard let prize = landedPrize, let winner = selectedPlayer else { return }
         SoundPlayer.shared.play(.happy)
         gameSession.perform(.addMoney(amount: prize), by: winner.id,
                             note: "\(winner.name) won the spin! $\(prize.formatted()) added to account.")
-        // Reset for the next spin (v1.3.0 behavior)
+        // Reset for the next spin
         landedPrize = nil
         selectedPlayer = nil
         reelIndex = spinnerRestingIndex

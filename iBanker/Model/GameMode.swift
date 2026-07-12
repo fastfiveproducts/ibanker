@@ -2,7 +2,7 @@
 //  GameMode.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/24/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -17,7 +17,7 @@
 
 import Foundation
 
-// Default starting balance/salary for each game mode.
+/// Default starting balance/salary for each game mode.
 struct GameModeDefaults: Codable, Equatable {
     let initialBalance: Int
     let initialSalary: Int
@@ -37,16 +37,16 @@ enum GameMode: String, CaseIterable, Codable, Identifiable {
     case fifteenMil = "$15M Balance"
     case custom = "Custom"
 
-    var id: String { self.rawValue }
+    var id: String { rawValue }
 
-    // Whether the Spin-to-Win spinner is on by default for this mode — true
-    // only for the $400K mode (The Game of Life). Kept centralized here so a
-    // future per-mode attribute (#7) can extend it rather than duplicate it.
+    /// Whether the Spin-to-Win spinner is on by default for this mode — true
+    /// only for the $400K mode (The Game of Life). Kept centralized here so a
+    /// future per-mode attribute (#7) can extend it rather than duplicate it.
     var defaultSpinnerOn: Bool {
         self == .fourHundredK
     }
 
-    // Default values for a non-custom mode.
+    /// Default values for a non-custom mode.
     var defaults: GameModeDefaults? {
         switch self {
         case .zero:

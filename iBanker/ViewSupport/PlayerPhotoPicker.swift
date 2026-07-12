@@ -2,6 +2,7 @@
 //  PlayerPhotoPicker.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/8/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -18,10 +19,10 @@ import PhotosUI
 
 /// The shared player-photo capture flow (issue #20's photo feature and its
 /// change-photo follow-up, shipped with PR #29): a confirmation dialog
-/// offering camera (when available) or photo library — mirroring v1.3.0's
-/// action sheet — plus a confirmed Remove Photo when one is set. Handles the
-/// async library load with supersede cancellation, surfaces load failure as
-/// an alert, and stores a small square JPEG via PlayerImageMaker.
+/// offering camera (when available) or photo library, plus a confirmed
+/// Remove Photo when one is set. Handles the async library load with
+/// supersede cancellation, surfaces load failure as an alert, and stores a
+/// small square JPEG via PlayerImageMaker.
 /// Used by AddNewPlayerView (creation) and PlayerView (change/remove).
 struct PlayerPhotoPickerModifier: ViewModifier {
     @Binding var isPresented: Bool

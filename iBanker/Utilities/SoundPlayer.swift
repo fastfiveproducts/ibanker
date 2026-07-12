@@ -2,6 +2,7 @@
 //  SoundPlayer.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -22,8 +23,11 @@
 //    © 2015; authorized for inclusion in this work and derivations.
 //  - CoinDrop.m4a — recorded by Pete Maiser, © 2015; authorized for use in
 //    this application.
-//  - CashRegister.Myoung8.commonswiki.m4a — public domain, via Wikimedia
-//    Commons (Myoung8~commonswiki, commons.wikimedia.org).
+//  - CashRegister.CapsLok.freesound.m4a — "Cash Register Fake" by CapsLok,
+//    freesound.org/people/CapsLok/sounds/184438/, CC0 1.0 (no attribution
+//    required; recorded here as provenance). Original Foley construction by
+//    the author — replaces a prior asset whose public-domain claim had a
+//    broken chain of title (#46).
 //
 
 import Foundation
@@ -31,7 +35,7 @@ import AVFoundation
 
 /// The bundled sound effects (.m4a resources in iBanker/Resources/).
 enum SoundEffect: String {
-    case cashRegister = "CashRegister.Myoung8.commonswiki"  // money added
+    case cashRegister = "CashRegister.CapsLok.freesound"    // money added
     case coinDrop = "CoinDrop"                              // money subtracted
     case happy = "HappySound"                               // money sent / spin won
     case sad = "SadSound"                                   // balance went negative

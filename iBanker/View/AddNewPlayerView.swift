@@ -2,7 +2,7 @@
 //  AddNewPlayerView.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/22/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -18,10 +18,10 @@ import SwiftUI
 
 struct AddNewPlayerView: View {
     // @Environment(\.dismiss) property to dismiss the sheet.
-    @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var gameSession: GameSession
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var gameSession: GameSession
     // The single shared SettingsStore, injected from iBankerApp (#13)
-    @EnvironmentObject var settings: SettingsStore
+    @EnvironmentObject private var settings: SettingsStore
 
     // @State properties to hold the input values from the form.
     @State private var playerName: String = ""
@@ -29,8 +29,8 @@ struct AddNewPlayerView: View {
     @State private var playerBalance: Int? = nil
     @State private var playerSalary: Int? = nil
 
-    // Keyboard focus (#35): Return advances Name → Token; the numeric fields
-    // dismiss via the shared keyboardDoneBar.
+    /// Keyboard focus (#35): Return advances Name → Token; the numeric fields
+    /// dismiss via the shared keyboardDoneBar.
     private enum Field {
         case name, token, balance, salary
     }
@@ -48,7 +48,7 @@ struct AddNewPlayerView: View {
         NavigationStack {
             Form {
                 Section("Player Details") {
-                    HStack{
+                    HStack {
                         Text("Name:")
                         TextField("Player Name", text: $playerName)
                             .autocorrectionDisabled() // Disable autocorrection for names
@@ -58,7 +58,7 @@ struct AddNewPlayerView: View {
                             .onSubmit { focusedField = .token }
                     }
 
-                    HStack{
+                    HStack {
                         Text("Token:")
                         TextField("Player Token", text: $playerToken)
                             .autocorrectionDisabled() // Disable autocorrection for names
@@ -84,24 +84,20 @@ struct AddNewPlayerView: View {
 
                     HStack {
                         Text("Balance:")
-                        HStack(spacing: 0) {
-                            Text("$")
-                            TextField("Initial Balance", value: $playerBalance, formatter: NumberFormatter.integer)
-                                .keyboardType(.numberPad)
-                                .autocorrectionDisabled()
-                                .focused($focusedField, equals: .balance)
-                        }
+                        // The money formatter renders the committed value's $
+                        // itself, replacing the old Text("$") prefix shims.
+                        TextField("Initial Balance", value: $playerBalance, formatter: NumberFormatter.money)
+                            .keyboardType(.numberPad)
+                            .autocorrectionDisabled()
+                            .focused($focusedField, equals: .balance)
                     }
 
                     HStack {
                         Text("Salary:")
-                        HStack(spacing: 0) {
-                            Text("$")
-                            TextField("Initial Salary", value: $playerSalary, formatter: NumberFormatter.integer)
-                                .keyboardType(.numberPad)
-                                .autocorrectionDisabled()
-                                .focused($focusedField, equals: .salary)
-                        }
+                        TextField("Initial Salary", value: $playerSalary, formatter: NumberFormatter.money)
+                            .keyboardType(.numberPad)
+                            .autocorrectionDisabled()
+                            .focused($focusedField, equals: .salary)
                     }
                 }
 
@@ -138,13 +134,13 @@ struct AddNewPlayerView: View {
             .navigationTitle("Add New Player")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         dismiss() // Dismiss the sheet without saving
                     }
                 }
             }
-            // Photo capture: the shared flow — v1.3.0-style dialog, camera
+            // Photo capture: the shared flow — confirmation dialog, camera
             // (front-facing first) when available, library via PhotosPicker.
             // See PlayerPhotoPicker.swift.
             .playerPhotoPicker(isPresented: $showingPhotoDialog,
@@ -158,10 +154,10 @@ struct AddNewPlayerView: View {
                 // Set default values from the shared settings when the view appears (#13)
                 if playerName.isEmpty { // Only set defaults if player name is empty (new player)
                     if playerBalance == nil {
-                        self.playerBalance = settings.effectiveDefaultBalance
+                        playerBalance = settings.effectiveDefaultBalance
                     }
                     if playerSalary == nil {
-                        self.playerSalary = settings.effectiveDefaultSalary
+                        playerSalary = settings.effectiveDefaultSalary
                     }
                 }
                 // Open ready to type the name (#37 rider)

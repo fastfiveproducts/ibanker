@@ -4,7 +4,7 @@
 //  Template created by Pete Maiser, July 2024 through May 2025
 //  Split from MenuView ~restored by Pete Maiser, Fast Five Products LLC, on 10/23/25.
 //  App-specific content created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Template v0.4.2 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -23,7 +23,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @EnvironmentObject var gameSession: GameSession
+    @EnvironmentObject private var gameSession: GameSession
 
     // Owned by MainTabView's toolbar; this binding lets the empty state present it too.
     @Binding var showingAddPlayerSheet: Bool
@@ -75,8 +75,7 @@ struct HomeView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
 
-            // Tagline carried forward from the original Objective-C app's
-            // first-launch screen
+            // Tagline carried forward from the original app's first-launch screen
             Text("iBanker takes the place of paper money in board games!")
                 .font(.subheadline)
                 .foregroundColor(.gray)
@@ -220,8 +219,8 @@ struct HomeView: View {
 
     // MARK: - Helper Functions
 
-    // One roster row's content (thumbnail, name/token, balance) — shared by the
-    // navigating row and the Edit-mode row.
+    /// One roster row's content (thumbnail, name/token, balance) — shared by the
+    /// navigating row and the Edit-mode row.
     private func playerRow(_ player: Player) -> some View {
         HStack {
             PlayerThumbnailView(imageData: player.imageData, size: 44)
@@ -231,7 +230,7 @@ struct HomeView: View {
                     .font(.headline)
                     .accessibilityLabel("Player name: \(player.name)")
 
-                if player.token != "" {
+                if !player.token.isEmpty {
                     Text("Token: \(player.token)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
@@ -242,9 +241,13 @@ struct HomeView: View {
 
             Spacer()
 
-            Text("$\(gameSession.currentState.playerBalances[player.id] ?? 0)")
+            // Shrink to fit rather than wrap: big-money modes ($15M) at the
+            // largest allowed Dynamic Type size were wrapping mid-number.
+            Text("$\((gameSession.currentState.playerBalances[player.id] ?? 0).formatted())")
                 .font(.title2)
                 .fontWeight(.bold)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
                 .foregroundColor(
                     (gameSession.currentState.playerBalances[player.id] ?? 0) >= 0 ? .green : .red
                 )

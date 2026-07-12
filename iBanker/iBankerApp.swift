@@ -2,7 +2,7 @@
 //  iBankerApp.swift
 //
 //  Created by Elizabeth Maiser, Fast Five Products LLC, on 7/16/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/9/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Template v0.2.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -25,7 +25,8 @@ import SwiftData
 struct iBankerApp: App {
 
     @StateObject private var gameSession = GameSession()
-    
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some Scene {
         WindowGroup {
             MainTabView()
@@ -35,12 +36,23 @@ struct iBankerApp: App {
                 // raising the cap for the accessibility (AX) sizes.
                 .dynamicTypeSize(...AppConfig.dynamicSizeMax)
                 .onDisappear {
-                    // Save on close/background.
+                    // Save if the root view is ever torn down (belt-and-braces;
+                    // scenePhase below is the deterministic save).
                     gameSession.saveGame()
                 }
         }
         // Provide the SwiftData container for the Activity Log. Without this the
         // Activity tab's @Query has no container and crashes at runtime.
         .modelContainer(for: ActivityLogEntry.self)
+        // Save whenever the scene leaves the foreground (#38 B1): onDisappear
+        // alone never fires on backgrounding or termination — the root view
+        // outlives both — so game state was only ever persisted by accidental
+        // scene teardown. This restores v1.3.0's deterministic
+        // save-on-background (applicationDidEnterBackground) behavior.
+        .onChange(of: scenePhase) {
+            if scenePhase == .background || scenePhase == .inactive {
+                gameSession.saveGame()
+            }
+        }
     }
 }

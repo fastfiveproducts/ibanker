@@ -2,7 +2,7 @@
 //  SettingsView.swift
 //
 //  Template file created by Elizabeth Maiser, Fast Five Products LLC, on 7/4/25.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Template v0.3.0 (updated) — Fast Five Products LLC's public AGPL template.
 //
@@ -52,7 +52,7 @@ struct SettingsView: View {
                 .padding(.bottom)
             }
             Form {
-                Section ("Preferences"){
+                Section("Preferences") {
                     Toggle("Sound effects", isOn: $settings.soundEffects)
                     Toggle("Spin-to-Win Spinner", isOn: $settings.enabledSpinner)
                 }
@@ -127,7 +127,7 @@ struct SettingsView: View {
     
     private func resetPlayers() {
         gameSession.resetPlayers(balance: settings.effectiveDefaultBalance, salary: settings.effectiveDefaultSalary)
-        // One shake for the whole reset (not per player), matching v1.3.0
+        // One shake for the whole reset (not per player)
         SoundPlayer.shared.playSystemSound(.shake)
     }
 

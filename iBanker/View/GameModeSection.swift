@@ -2,7 +2,7 @@
 //  GameModeSection.swift
 //
 //  Created by Pete Maiser, Fast Five Products LLC, on 7/7/26.
-//  Modified by Pete Maiser, Fast Five Products LLC, on 7/10/26.
+//  Modified by Pete Maiser, Fast Five Products LLC, on 7/11/26.
 //
 //  Copyright © 2026 Fast Five Products LLC. All rights reserved.
 //
@@ -46,8 +46,9 @@ struct GameModeSection: View {
     // fields bind optionals so an unset value shows the placeholder instead
     // of a stuck "0" — matching every other money field (#37). A deliberate
     // consequence: a stored 0 displays as empty, which is equivalent here.
-    // (Clear-then-commit redisplays the old value — empty text doesn't parse,
-    // so set(nil) doesn't fire; same as every other money field. Type 0 to unset.)
+    // (Clearing a field to empty commits nil and unsets it — device-verified
+    // at the #42 gate, superseding an earlier note here that claimed the old
+    // value redisplayed and 0 had to be typed to unset.)
     private var customBalanceBinding: Binding<Int?> {
         Binding(
             get: { settings.customInitialBalance == 0 ? nil : settings.customInitialBalance },
@@ -107,7 +108,7 @@ struct GameModeSection: View {
                 HStack {
                     Text("Default Balance")
                     Spacer()
-                    TextField("Initial Balance", value: customBalanceBinding, formatter: NumberFormatter.integer)
+                    TextField("Initial Balance", value: customBalanceBinding, formatter: NumberFormatter.money)
                         .keyboardType(.numberPad)
                         .autocorrectionDisabled()
                         .multilineTextAlignment(.trailing)
@@ -116,7 +117,7 @@ struct GameModeSection: View {
                 HStack {
                     Text("Default Salary")
                     Spacer()
-                    TextField("Initial Salary", value: customSalaryBinding, formatter: NumberFormatter.integer)
+                    TextField("Initial Salary", value: customSalaryBinding, formatter: NumberFormatter.money)
                         .keyboardType(.numberPad)
                         .autocorrectionDisabled()
                         .multilineTextAlignment(.trailing)
@@ -127,13 +128,13 @@ struct GameModeSection: View {
                 HStack {
                     Text("Default Balance")
                     Spacer()
-                    Text("$\(settings.effectiveDefaultBalance)")
+                    Text("$\(settings.effectiveDefaultBalance.formatted())")
                         .foregroundColor(.secondary)
                 }
                 HStack {
                     Text("Default Salary")
                     Spacer()
-                    Text("$\(settings.effectiveDefaultSalary)")
+                    Text("$\(settings.effectiveDefaultSalary.formatted())")
                         .foregroundColor(.secondary)
                 }
             }
@@ -148,7 +149,7 @@ struct GameModeSection: View {
             }
         }
         .onChange(of: settings.selectedGameMode) {
-            // Reset the spinner to the mode's default (v1.3.0) on ANY mode change,
+            // Reset the spinner to the mode's default on ANY mode change,
             // including programmatic ones like Reset Settings; the Preferences
             // toggle stays a manual override. (Logging lives on the picker binding
             // above, not here.)

@@ -31,7 +31,7 @@ Player **balances and salaries are never stored directly**. `gameSession.current
 **Consequence for any money/salary change:** append a transaction via `gameSession.perform(action, by: playerID)` — never mutate a balance directly. Views read balances through `gameSession.currentState.playerBalances[player.id]`. `PlayerView` is where all the user-facing `GameAction`s originate.
 
 ### Persistence
-- `GameSession` JSON-encodes `players` and `transactions` into `@AppStorage` (UserDefaults keys `gamePlayers` / `gameTransactions`). It is saved on the root view's `onDisappear` and decoded in `GameSession.init()` (direct `UserDefaults` access, to satisfy two-phase init).
+- `GameSession` JSON-encodes `players` and `transactions` into `@AppStorage` (UserDefaults keys `gamePlayers` / `gameTransactions`). It is saved deterministically whenever the scene leaves the foreground (`scenePhase` → `.background`/`.inactive` in `iBankerApp`, #38 — the root view's `onDisappear` remains as belt-and-braces but never fires on backgrounding) and decoded in `GameSession.init()` (direct `UserDefaults` access, to satisfy two-phase init).
 - `SettingsStore` persists individual settings via `@AppStorage` (`selectedGameMode`, `customInitialBalance`, `customInitialSalary`, `soundEffects`, `enabledSpinner`).
 - `GameMode` defines preset starting balances/salaries per popular game; `SettingsStore.effectiveDefaultBalance/Salary` resolve the active mode (or custom values).
 

@@ -25,6 +25,7 @@
 		B534D2572FED28BE003FD983 /* Exceptions for "iBanker" folder in "iBanker" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"app-store-listing.md",
 				Info.plist,
 			);
 			target = B546DF0C1BDBCC360006D303 /* iBanker */;
@@ -275,7 +276,7 @@
 				CLANG_CXX_LIBRARY = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iBanker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -300,7 +301,7 @@
 				CLANG_CXX_LIBRARY = "$(inherited)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = iBanker/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -13,7 +13,7 @@
 //  derivative works in proprietary software without being subject to the AGPL terms.
 //  See LICENSE-EXCEPTIONS.md for details.
 //
-//  Swift port of v1.3.0's GameAudioPlayer (see the `objective-c` branch).
+//  Swift port of v1.3.0's GameAudioPlayer (see the `v1.3.0` tag).
 //  AVAudioPlayer tends to get cleaned up by ARC before it finishes playing;
 //  SoundPlayer solves that by retaining each player in a private array and
 //  releasing it in audioPlayerDidFinishPlaying.

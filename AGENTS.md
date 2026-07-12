@@ -117,7 +117,7 @@ iBanker follows the FFP template's git-flow model:
 
 - **`develop`** — the default working/integration branch. All feature work branches off `develop` and squash-merges back into it.
 - **`main`** — the release/production branch: a clean linear history with one commit per release (`Release vX.Y.Z`). Cut a release by squashing all of `develop` since the last release onto `main`.
-- **`objective-c`** — a frozen snapshot of the final Objective-C release (v1.3.0), kept for reference; not a working branch.
+- The final Objective-C release survives as the **`v1.3.0` tag** (history purged of an encumbered sound asset, #46); the former `objective-c` branch was retired at the v2.0.0 release cut and is archived privately by the owner.
 
 The SwiftUI rewrite (issue #11, targeting v2.0.0) lives on `develop`; it is not yet released, so `main` still points at the last shipped version, v1.3.0.
 

@@ -27,8 +27,7 @@ simulator or device.
 - `develop` — the default working branch; all feature work branches off it
   (usually from a GitHub issue) and squash-merges back via PR.
 - `main` — the release branch: one `Release vX.Y.Z` commit per release.
-- `objective-c` — a frozen snapshot of the final Objective-C release
-  (v1.3.0), kept for reference.
+- The final Objective-C release is preserved as the `v1.3.0` tag.
 
 ## File headers
 

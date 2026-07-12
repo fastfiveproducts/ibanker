@@ -8,6 +8,10 @@ xcuserdata/
 # Add this line if you want to avoid checking in source code from the Xcode workspace
 *.xcworkspace
 
+# Xcode build artifacts
+build/
+DerivedData/
+
 ## Obj-C/Swift specific
 *.hmap
 
@@ -26,10 +30,18 @@ Package.pins
 Package.resolved
 .swiftpm
 
-
-# firebase connection
+# Firebase Connection
 GoogleService-Info.plist
+.firebase/
 
-# firebase dataconnect generated files
+# Firebase dataconnect generated files
 dataconnect-generated
 
+# Custom template-diff output
+template_diff.txt
+
+# Claude Code session data and logs
+.claude/settings.local.json
+.claude/sessions/
+.claude/logs/
+.claude/tmp/
